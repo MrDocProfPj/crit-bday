@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cut">
+<meta name="theme-color" content="#0b0710">
+<title>The Birthday Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0710;
+    --card: #17101f;
+    --line: #2c2138;
+    --ink: #f6eefc;
+    --dim: #a593b8;
+    --hot: #ff3d8b;
+    --gold: #ffc53d;
+    --venmo: #008cff;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: "Bricolage Grotesque", system-ui, sans-serif;
+    min-height: 100dvh;
+    padding: max(20px, env(safe-area-inset-top)) 18px calc(150px + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(60% 40% at 85% 0%, #ff3d8b33, transparent 70%),
+      radial-gradient(50% 35% at 0% 20%, #7a3dff2e, transparent 70%),
+      var(--bg);
+  }
+  main { max-width: 440px; margin: 0 auto; }
+
+  header { margin: 8px 0 22px; }
+  .kicker { font-size: 18px; font-weight: 500; color: var(--gold); margin: 0 0 14px; }
+  h1 {
+    font-weight: 800; font-size: clamp(44px, 14vw, 64px); line-height: .9;
+    letter-spacing: -.03em; margin: 10px 0 12px;
+  }
+  h1 em { font-style: normal; color: var(--hot); }
+  .countdown {
+    display: inline-flex; gap: 8px; align-items: center;
+    font: 500 13px/1 "JetBrains Mono", monospace; color: var(--dim);
+    border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px;
+  }
+  .countdown b { color: var(--ink); font-weight: 700; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hot); }
+
+  .menu { display: grid; gap: 10px; }
+  .item {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 14px 14px 16px;
+    transition: border-color .15s, transform .15s;
+  }
+  .item.on { border-color: var(--hot); }
+  .item .name { font-weight: 800; font-size: 20px; }
+  .item .sub { color: var(--dim); font-size: 14px; margin-top: 2px; }
+  .item .price { font: 700 14px "JetBrains Mono", monospace; color: var(--gold); }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button {
+    width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line);
+    background: #221830; color: var(--ink); font: 800 22px/1 "Bricolage Grotesque", sans-serif; cursor: pointer;
+  }
+  .stepper button:active { transform: scale(.94); }
+  .stepper button.plus { background: var(--hot); border-color: var(--hot); color: #1a0010; }
+  .stepper output { min-width: 30px; text-align: center; font: 700 20px "JetBrains Mono", monospace; }
+
+  .meter { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 18px; }
+  .meter-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--dim); }
+  .meter-row b { color: var(--ink); font: 700 14px "JetBrains Mono", monospace; }
+  .track { height: 8px; border-radius: 99px; background: #221830; margin-top: 10px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: var(--gold); transition: width .3s; }
+  .undo { margin-top: 10px; background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+  .undo[hidden] { display: none; }
+  .stepper button:disabled { opacity: .3; }
+  .fine { color: var(--dim); font-size: 13px; line-height: 1.5; margin: 22px 4px 0; }
+  .fine a { color: var(--dim); }
+
+  .bar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+  }
+  .bar-inner { max-width: 440px; margin: 0 auto; }
+  .summary {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font: 500 13px "JetBrains Mono", monospace; color: var(--dim); margin: 0 4px 10px; min-height: 16px;
+  }
+  .summary b { color: var(--ink); font-size: 15px; }
+  .go {
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    height: 62px; border-radius: 20px; background: var(--venmo); color: white;
+    font-weight: 800; font-size: 20px; text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,.45);
+  }
+  .go[aria-disabled="true"] { background: #241a2f; color: var(--dim); box-shadow: none; pointer-events: none; }
+  .alt { display: block; text-align: center; margin-top: 10px; font-size: 13px; color: var(--dim); }
+  .alt[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1><em id="bdayName"></em> Tab</h1>
+    <p class="kicker"><span id="budgetText"></span> open bar. <span id="sponsor"></span> is buying.</p>
+    <div class="countdown"><span class="dot"></span><span id="clock"></span></div>
+  </header>
+
+  <section class="menu" id="menu"></section>
+
+  <div class="meter" id="meter">
+    <div class="meter-row"><span>Requested from this phone</span><b id="spentText"></b></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <button class="undo" id="undo" hidden>Didn’t actually send that last one? Undo</button>
+  </div>
+
+  <p class="fine">
+    Pick what you need and tap the blue button. Venmo opens with the request already filled in and sent to
+    <span id="handleText"></span>. It gets paid the second <span class="sponsorName"></span> taps “Pay.” Max <span id="budgetText2"></span> per phone. Drink water, look after each other.
+  </p>
+</main>
+
+<div class="bar">
+  <div class="bar-inner">
+    <div class="summary"><span id="lines">Nothing on the tab yet</span><b id="total"></b></div>
+    <a class="go" id="go" aria-disabled="true" target="_blank" rel="noopener">Request on Venmo</a>
+    <a class="alt" id="alt" hidden>Venmo didn’t open? Tap here</a>
+  </div>
+</div>
+
+<script>
+/* ======== EDIT THESE ======== */
+const CONFIG = {
+  venmo: "ParkerJames",         // your Venmo username, without the @
+  sponsor: "Parker",            // shown in the header
+  birthdayName: "Crit",         // e.g. "Sam" → "Sam's Birthday Tab" (blank → "The Birthday Tab")
+  budget: 81,                   // most one phone can request in total
+  birthdayAt: "2026-11-01T00:00:00", // local time the birthday starts
+  items: [
+    { id: "shot",  name: "Shot",  sub: "Down the hatch",          price: 7, emoji: "🥃" },
+    { id: "drink", name: "Drink", sub: "Cocktail, beer, seltzer", price: 9, emoji: "🍸" },
+  ],
+};
+/* ============================ */
+
+const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
+const $ = id => document.getElementById(id);
+
+$("sponsor").textContent = CONFIG.sponsor;
+document.querySelectorAll(".sponsorName").forEach(e => e.textContent = CONFIG.sponsor);
+const bday = CONFIG.birthdayName ? `${CONFIG.birthdayName}'s Birthday` : "Birthday";
+$("bdayName").textContent = CONFIG.birthdayName ? bday : "The Birthday";
+document.title = `${$("bdayName").textContent} Tab`;
+$("budgetText").textContent = $("budgetText2").textContent = "$" + CONFIG.budget;
+const KEY = `tab:${CONFIG.venmo}:${CONFIG.birthdayAt}`;
+let spent = Number(localStorage.getItem(KEY)) || 0;
+let lastSent = 0, lastAlt = "";
+const left = () => CONFIG.budget - spent;
+const cartTotal = () => CONFIG.items.reduce((s, i) => s + i.price * counts[i.id], 0);
+$("handleText").textContent = "@" + CONFIG.venmo;
+
+const menu = $("menu");
+for (const item of CONFIG.items) {
+  const row = document.createElement("div");
+  row.className = "item";
+  row.innerHTML = `
+    <div>
+      <div class="name">${item.emoji} ${item.name}</div>
+      <div class="sub">${item.sub} · <span class="price">$${item.price}</span></div>
+    </div>
+    <div class="stepper">
+      <button class="minus" aria-label="One less ${item.name}">−</button>
+      <output>0</output>
+      <button class="plus" aria-label="One more ${item.name}">+</button>
+    </div>`;
+  const out = row.querySelector("output");
+  const set = n => {
+    counts[item.id] = Math.max(0, Math.min(20, n));
+    out.textContent = counts[item.id];
+    row.classList.toggle("on", counts[item.id] > 0);
+    render();
+  };
+  item.plusBtn = row.querySelector(".plus");
+  item.minusBtn = row.querySelector(".minus");
+  item.set = set;
+  row.querySelector(".minus").onclick = () => set(counts[item.id] - 1);
+  row.querySelector(".plus").onclick = () => {
+    if (cartTotal() + item.price > left()) return;
+    set(counts[item.id] + 1); navigator.vibrate?.(10);
+  };
+  menu.appendChild(row);
+}
+
+function render() {
+  const picked = CONFIG.items.filter(i => counts[i.id] > 0);
+  const total = picked.reduce((s, i) => s + i.price * counts[i.id], 0);
+  const parts = picked.map(i => `${counts[i.id]} ${i.name.toLowerCase()}${counts[i.id] > 1 && !i.name.endsWith("s") ? "s" : ""}`);
+  const go = $("go"), alt = $("alt");
+  for (const i of CONFIG.items) {
+    i.plusBtn.disabled = total + i.price > left();
+    i.minusBtn.disabled = counts[i.id] === 0;
+  }
+  $("spentText").textContent = `$${spent} of $${CONFIG.budget}`;
+  $("fill").style.width = Math.min(100, (spent + total) / CONFIG.budget * 100) + "%";
+  $("undo").hidden = !lastSent;
+
+  if (!total) {
+    $("lines").textContent = left() < Math.min(...CONFIG.items.map(i => i.price)) ? "Tab’s maxed out on this phone 🫡" : "Nothing on the tab yet";
+    $("total").textContent = "";
+    go.textContent = "Request on Venmo";
+    go.setAttribute("aria-disabled", "true");
+    go.removeAttribute("href");
+    // Just sent? Keep the app-link fallback for that request on screen.
+    alt.hidden = !lastSent;
+    if (lastSent) alt.href = lastAlt;
+    return;
+  }
+
+  const emojis = picked.map(i => i.emoji.repeat(Math.min(counts[i.id], 3))).join("");
+  const note = `${emojis} ${parts.join(" + ")} · ${bday} 🎂`;
+  const amount = total.toFixed(2);
+  const q = `txn=charge&amount=${amount}&note=${encodeURIComponent(note)}`;
+  const handle = encodeURIComponent(CONFIG.venmo);
+
+  $("lines").textContent = parts.join(" + ");
+  $("total").textContent = "$" + total;
+  go.textContent = `Request $${total} on Venmo`;
+  go.setAttribute("aria-disabled", "false");
+  // Real <a> tap on venmo.com/<user> so iOS hands off to the app (universal link).
+  go.href = `https://venmo.com/${handle}?${q}`;
+  // Fallback straight into the app's URL scheme.
+  alt.href = `venmo://paycharge?${q}&recipients=${handle}`;
+  alt.hidden = false;
+}
+
+function recordSend() {
+  const total = cartTotal();
+  if (!total) return;
+  lastSent = total;
+  lastAlt = $("alt").href;
+  spent += total;
+  localStorage.setItem(KEY, spent);
+  // Let the link navigate first, then clear the cart.
+  setTimeout(() => CONFIG.items.forEach(i => i.set(0)), 300);
+}
+$("go").addEventListener("click", recordSend);
+$("alt").addEventListener("click", recordSend);
+$("undo").onclick = () => {
+  spent = Math.max(0, spent - lastSent);
+  lastSent = 0; lastAlt = "";
+  localStorage.setItem(KEY, spent);
+  render();
+};
+
+function tick() {
+  const ms = new Date(CONFIG.birthdayAt) - new Date();
+  if (ms <= 0) { $("clock").innerHTML = `<b>It’s officially ${CONFIG.birthdayName ? CONFIG.birthdayName + "’s" : "the"} birthday 🎂</b>`; return; }
+  const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60, s = Math.floor(ms / 1e3) % 60;
+  $("clock").innerHTML = `Birthday in <b>${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s</b>`;
+}
+tick(); setInterval(tick, 1000);
+render();
+</script>
+</body>
+</html>
