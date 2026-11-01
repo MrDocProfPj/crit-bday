@@ -48,7 +48,7 @@
 
   main {
     min-height: 100svh; display: flex; flex-direction: column; width: 100%; max-width: 430px; margin: 0 auto;
-    padding: 8px 0 max(10px, env(safe-area-inset-bottom));
+    padding: 8px 0 8px;
   }
 
   /* ---------- the spell: cat → sparkles → QR ---------- */
@@ -84,7 +84,7 @@
   }
 
   /* ---------- title ---------- */
-  h1 { margin: 6px 0 0; font-family: var(--display); font-weight: 400; line-height: .95; text-align: center; }
+  h1 { margin: 26px 0 0; font-family: var(--display); font-weight: 400; line-height: .95; text-align: center; }
   h1 .who { display: block; font-size: 50px; color: var(--coral); text-shadow: 3px 3px 0 var(--plum); transform: rotate(-2deg); }
   h1 .what { display: block; font-size: clamp(21px, 6.8vw, 29px); margin-top: 4px; white-space: nowrap; letter-spacing: .03em; }
   /* Plum drop shadow, like "Crit's", so the light letters don't sink into the paper. */
@@ -197,7 +197,7 @@
   @keyframes fall { to { transform: translate(var(--drift), 110vh) rotate(var(--spin)); } }
 
   /* ---------- request button ---------- */
-  .bar { padding-top: 10px; }
+  .bar { padding-top: 10px; position: relative; }
   .go {
     display: flex; flex-direction: column; justify-content: center; align-items: center; height: 66px; line-height: 1.05;
     border-radius: 34px 22px 30px 20px / 24px 32px 22px 30px;
@@ -211,7 +211,7 @@
     background: transparent; color: var(--plum); border-style: dashed; box-shadow: none; pointer-events: none;
     font-family: var(--hand); font-weight: 700; font-size: 20px;
   }
-  .alt { display: block; text-align: center; margin-top: 6px; height: 18px; font-size: 15px; font-weight: 700; color: var(--plum); }
+  .alt { position: absolute; left: 0; right: 0; top: calc(100% + 4px); text-align: center; font-size: 15px; font-weight: 700; color: var(--plum); }
   .alt.off { visibility: hidden; }
 
   /* ---------- big QR overlay ---------- */
@@ -228,12 +228,11 @@
   /* Short screens (small iPhones, Safari toolbars showing): tighten everything so it fits one view. */
   @media (max-height: 700px) {
     .stage { min-height: 92px; }
-    h1 { margin-top: 2px; }
+    h1 { margin-top: 8px; }
     h1 .who { font-size: 38px; }
     .item .art { width: 44px; height: 44px; }
     .item .name { font-size: 22px; }
     .stepper button { width: 40px; height: 40px; }
-    .alt { margin-top: 4px; }
     .sub { margin-top: 4px; font-size: 19px; }
     .menu { gap: 12px; margin-top: 10px; }
     .item { padding-top: 6px; padding-bottom: 6px; }
