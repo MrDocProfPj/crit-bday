@@ -63,7 +63,7 @@
   .qr rect { fill: var(--plum); animation: pop .35s cubic-bezier(.3,1.6,.5,1) backwards; transform-box: fill-box; transform-origin: center; }
   @keyframes pop { from { transform: scale(0); fill: var(--mustard); } }
   .qr::after {
-    content: "tap to share"; position: absolute; left: 50%; bottom: -22px; transform: translateX(-50%) rotate(-3deg);
+    content: "tap to share if you dare"; position: absolute; right: 0; bottom: -22px; transform: rotate(-3deg); transform-origin: right center;
     font: 700 15px var(--hand); white-space: nowrap; color: var(--plum);
   }
   .spark {
