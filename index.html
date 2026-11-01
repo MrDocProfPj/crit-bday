@@ -219,9 +219,11 @@
     background: rgba(59, 31, 74, .88); color: #FFF6E9; font: 700 22px var(--hand); text-align: center;
   }
   .big[hidden] { display: none; }
-  .big .card { width: min(78vw, 330px); aspect-ratio: 1; background: #FFF6E9; padding: 16px; border-radius: 16px; border: 4px solid var(--mustard); }
-  .big svg { width: 100%; height: 100%; display: block; }
-  .big rect { fill: var(--plum); }
+  .big .card { width: min(78vw, 330px); aspect-ratio: 1; background: #FFF6E9; padding: 4px; border-radius: 16px; border: 4px solid var(--mustard); }
+  /* A real linked <img>, so iOS long-press offers Open / Share / Copy Link / Save to Photos. */
+  .big .card a { display: block; width: 100%; height: 100%; -webkit-touch-callout: default; }
+  .big .card img { width: 100%; height: 100%; display: block; image-rendering: pixelated; border-radius: 10px; -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto; }
+  .big .hint { font-size: 17px; opacity: .75; margin-top: -10px; }
   /* Short screens (small iPhones, Safari toolbars showing): tighten everything so it fits one view. */
   @media (max-height: 700px) {
     .stage { min-height: 92px; }
@@ -291,8 +293,9 @@
 </main>
 
 <div class="big" id="big" hidden>
-  <div class="card" id="bigCard"></div>
+  <div class="card"><a id="shareLink" href="https://is.gd/critsbday"><img src="assets/share-qr.png" alt="QR code for is.gd/critsbday"></a></div>
   <div>group drinky time even! ✦</div>
+  <div class="hint">long-press the code to share it</div>
 </div>
 
 <script>
@@ -353,9 +356,10 @@ function qrSvg(animated) {
   return `<svg viewBox="0 0 ${n + 2 * q} ${n + 2 * q}" shape-rendering="crispEdges">${rects}</svg>`;
 }
 $("qr").innerHTML = qrSvg(true);
-$("bigCard").innerHTML = qrSvg(false);
 $("qr").onclick = () => { $("big").hidden = false; };
 $("big").onclick = () => { $("big").hidden = true; };
+// A quick tap on the QR just closes the overlay; long-press still gets iOS's link menu.
+$("shareLink").onclick = e => e.preventDefault();
 
 // ---- sparkles from the wand tip to the QR ----
 const hero = $("hero"), stage = $("stage");
