@@ -154,6 +154,11 @@ $("bdayName").textContent = CONFIG.birthdayName ? bday : "The Birthday";
 document.title = `${$("bdayName").textContent} Tab`;
 $("budgetText").textContent = $("budgetText2").textContent = "$" + CONFIG.budget;
 const KEY = `tab:${CONFIG.venmo}:${CONFIG.birthdayAt}`;
+// Visit the page with ?reset to zero this phone's tab.
+if (new URLSearchParams(location.search).has("reset")) {
+  localStorage.removeItem(KEY);
+  history.replaceState(null, "", location.pathname);
+}
 let spent = Number(localStorage.getItem(KEY)) || 0;
 let lastSent = 0, lastAlt = "";
 const left = () => CONFIG.budget - spent;
