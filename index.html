@@ -3,230 +3,302 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFF6E9">
-<title>Crit's Birthday Tab</title>
+<meta name="theme-color" content="#CDBB98">
+<title>Crit's Whimsical Birthday</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Shrikhand&display=swap" rel="stylesheet">
 <style>
   :root {
-    --cream: #FFF6E9;
-    --paper: #FBEBD3;
-    --mustard: #F2B33D;
-    --teal: #4FA8A0;
+    /* Dimmed kraft-paper ground so it doesn't flashbang in a dark bar. */
+    --page: #CDBB98;
+    --card-cream: #EBDDC2;
+    --hatch: #DCCBAA;
+    --mustard: #E9A92E;
+    --teal: #3F938B;
     --plum: #3B1F4A;
-    --pink: #F6B5C6;
-    --coral: #E8574A;
+    --pink: #E39CB0;
+    --coral: #DC4E42;
     --purple: #6A3F8F;
     --ink: var(--plum);
     --hand: "Gaegu", "Chalkboard SE", "Marker Felt", system-ui, sans-serif;
     --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { background: var(--cream); }
+  html { background: var(--page); }
   body {
-    margin: 0; color: var(--ink); font-family: var(--hand); font-size: 20px; line-height: 1.25;
-    min-height: 100svh;
-    padding: max(14px, env(safe-area-inset-top)) 20px calc(200px + env(safe-area-inset-bottom));
+    margin: 0; color: var(--ink); font-family: var(--hand); font-size: 19px; line-height: 1.2;
+    min-height: 100svh; display: flex; flex-direction: column;
+    padding: max(8px, env(safe-area-inset-top)) 18px max(10px, env(safe-area-inset-bottom));
     overflow-x: hidden;
   }
   button, a { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 
-  /* Painted backdrop + crayon grain. Fixed layers, since iOS ignores background-attachment: fixed. */
+  /* Painted backdrop (dimmed) + crayon grain. Fixed layers, since iOS ignores background-attachment: fixed. */
   .backdrop, .grain { position: fixed; inset: 0; pointer-events: none; }
-  .backdrop { z-index: -2; background: var(--cream) url(assets/bg.jpg) center top / cover no-repeat; }
+  .backdrop { z-index: -2; background: url(assets/bg.jpg) center top / cover no-repeat; filter: brightness(.8) sepia(.25) saturate(1.1); }
   .grain {
-    z-index: 50; opacity: .22; mix-blend-mode: multiply;
+    z-index: 50; opacity: .25; mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .12 0 0 0 0 .29 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  main { position: relative; max-width: 430px; margin: 0 auto; }
+  main { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 430px; margin: 0 auto; }
 
-  /* ---------- header ---------- */
-  header { position: relative; text-align: center; padding-top: 6px; }
-  .hero {
-    display: block; width: 62%; max-width: 250px; margin: 0 auto -6px;
-    transform: rotate(-4deg); animation: bob 4s ease-in-out infinite;
+  /* ---------- the spell: cat → sparkles → QR ---------- */
+  .stage { position: relative; flex: 1 1 150px; min-height: 104px; max-height: 210px; }
+  /* Short screens (small iPhones, Safari toolbars showing): tighten everything so it fits one view. */
+  @media (max-height: 640px) {
+    .stage { min-height: 92px; }
+    h1 { margin-top: 2px; }
+    h1 .who { font-size: 38px; }
+    .item .art { width: 44px; height: 44px; }
+    .item .name { font-size: 22px; }
+    .stepper button { width: 40px; height: 40px; }
+    .alt { margin-top: 4px; }
+    .sub { margin-top: 4px; font-size: 19px; }
+    .menu { gap: 12px; margin-top: 10px; }
+    .item { padding-top: 6px; padding-bottom: 6px; }
+    .meter { margin-top: 10px; }
+    .bar { padding-top: 8px; }
+    .go { height: 52px; }
+    .summary { min-height: 20px; margin-bottom: 4px; }
   }
-  @keyframes bob { 50% { transform: rotate(-1deg) translateY(-6px); } }
-  h1 { margin: 0; font-family: var(--display); font-weight: 400; line-height: .95; }
-  h1 .who {
-    display: block; font-size: 64px; color: var(--coral);
-    text-shadow: 3px 3px 0 var(--plum);
-    transform: rotate(-3deg);
+  .hero { position: absolute; left: 0; bottom: -4px; height: 108%; aspect-ratio: 1; object-fit: contain; transform: rotate(-3deg); transform-origin: bottom center; }
+  .qr {
+    position: absolute; right: 2px; top: 50%; height: min(78%, 140px); aspect-ratio: 1;
+    transform: translateY(-50%) rotate(5deg);
+    background: #FFF6E9; border: 3px solid var(--plum); border-radius: 10px 14px 8px 12px;
+    box-shadow: 4px 4px 0 var(--plum); padding: 6px; cursor: pointer;
   }
-  h1 .what { display: block; font-size: 34px; margin-top: 6px; letter-spacing: .01em; }
+  .qr svg { display: block; width: 100%; height: 100%; }
+  .qr rect { fill: var(--plum); animation: pop .35s cubic-bezier(.3,1.6,.5,1) backwards; transform-box: fill-box; transform-origin: center; }
+  @keyframes pop { from { transform: scale(0); fill: var(--mustard); } }
+  .qr::after {
+    content: "tap to share"; position: absolute; left: 50%; bottom: -22px; transform: translateX(-50%) rotate(-3deg);
+    font: 700 15px var(--hand); white-space: nowrap; color: var(--plum);
+  }
+  .spark {
+    position: absolute; left: var(--x0); top: var(--y0); width: 0; height: 0; pointer-events: none;
+    animation: fly 1.6s ease-in infinite; animation-delay: var(--d); opacity: 0;
+  }
+  .spark::before {
+    content: "✦"; position: absolute; transform: translate(-50%, -50%); font-size: var(--s, 16px); color: var(--c);
+  }
+  @keyframes fly {
+    0%   { transform: translate(0, 0) scale(.4) rotate(0); opacity: 0; }
+    12%  { opacity: 1; }
+    50%  { transform: translate(var(--mx), var(--my)) scale(1.1) rotate(160deg); }
+    85%  { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(.3) rotate(320deg); opacity: 0; }
+  }
+  .sticker {
+    position: absolute; bottom: 0; left: 46%; width: 62px; height: 62px; border-radius: 50%;
+    background: var(--teal); color: #FFF6E9; display: grid; place-content: center; text-align: center;
+    transform: rotate(-10deg); font-weight: 700; font-size: 13px; line-height: 1;
+    box-shadow: inset 0 0 0 3px #FFF6E9, inset 0 0 0 5px var(--plum); z-index: 2;
+  }
+  .sticker b { font-family: var(--display); font-weight: 400; font-size: 16px; display: block; margin-top: 2px; }
+
+  /* ---------- title ---------- */
+  h1 { margin: 6px 0 0; font-family: var(--display); font-weight: 400; line-height: .95; text-align: center; }
+  h1 .who { display: block; font-size: 50px; color: var(--coral); text-shadow: 3px 3px 0 var(--plum); transform: rotate(-2deg); }
+  h1 .what { display: block; font-size: clamp(21px, 6.8vw, 29px); margin-top: 4px; white-space: nowrap; }
   h1 .what span { display: inline-block; }
-  .sub { margin: 10px 0 0; font-size: 22px; font-weight: 700; }
+  .sub { margin: 8px 0 0; text-align: center; font-size: 21px; font-weight: 700; }
   .sub b { background: var(--mustard); padding: 0 6px; border-radius: 6px 10px 5px 9px; }
 
-  .sticker {
-    position: absolute; top: 4px; right: -6px; width: 92px; height: 92px; border-radius: 50%;
-    background: var(--teal); color: var(--cream); display: grid; place-content: center; text-align: center;
-    transform: rotate(10deg); font-weight: 700; font-size: 16px; line-height: 1.05;
-    box-shadow: inset 0 0 0 4px var(--cream), inset 0 0 0 7px var(--plum);
-  }
-  .sticker b { font-family: var(--display); font-weight: 400; font-size: 22px; display: block; }
-  .bat { position: absolute; width: 44px; height: 20px; fill: var(--plum); }
-
   /* ---------- menu cards ---------- */
-  .menu { display: grid; gap: 22px; margin-top: 26px; }
+  .menu { display: grid; gap: 16px; margin-top: 14px; }
   .item {
-    position: relative; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 10px;
-    padding: 16px 14px 16px 10px; isolation: isolate;
+    position: relative; display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px;
+    padding: 9px 12px 9px 8px; isolation: isolate;
   }
   .item::before, .item::after { content: ""; position: absolute; inset: 0; z-index: -1; }
-  .item::before {
-    background: var(--card); border-radius: 26px 14px 30px 12px / 14px 28px 12px 24px;
-    filter: url(#rough);
-  }
+  .item::before { background: var(--card); border-radius: 26px 14px 30px 12px / 14px 28px 12px 24px; filter: url(#rough); }
   .item::after {
     border: 3px solid var(--plum); border-radius: 22px 30px 14px 28px / 26px 12px 26px 14px;
-    transform: translate(7px, 7px); z-index: -2;
+    transform: translate(6px, 6px); z-index: -2;
   }
-  .item.shot  { --card: var(--teal); transform: rotate(-1.2deg); }
-  .item.drink { --card: var(--pink); transform: rotate(1deg); }
+  .item.shot  { --card: var(--teal); transform: rotate(-1deg); }
+  .item.drink { --card: var(--pink); transform: rotate(.8deg); }
   .item.on::after { border-color: var(--coral); border-width: 4px; }
-  .item .art { width: 64px; height: 64px; object-fit: contain; display: grid; place-items: center; font-size: 46px; }
-  .item .name { font-family: var(--display); font-size: 30px; line-height: 1; }
-  .item .price { font-size: 20px; font-weight: 700; margin-top: 4px; }
-  .item .price b { font-size: 24px; }
-  .item .tag { font-size: 17px; white-space: nowrap; }
-  .dots { height: 8px; margin-top: 8px; width: 70px;
-    background: radial-gradient(circle, var(--plum) 3px, transparent 3.5px) 0 50% / 14px 8px repeat-x; opacity: .7; }
+  .item .art { width: 52px; height: 52px; object-fit: contain; display: grid; place-items: center; font-size: 36px; }
+  .item .name { font-family: var(--display); font-size: 25px; line-height: 1; }
+  .item .price { font-size: 18px; font-weight: 700; margin-top: 2px; }
+  .item .price b { font-size: 21px; }
 
-  .stepper { display: flex; align-items: center; gap: 6px; }
+  .stepper { display: flex; align-items: center; gap: 5px; }
   .stepper button {
-    width: 46px; height: 46px; border-radius: 50%; border: 3px solid var(--plum);
-    font-family: var(--display); font-size: 26px; line-height: 1; color: var(--plum); padding: 0 0 4px;
-    background: var(--cream); cursor: pointer;
+    width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--plum);
+    font-family: var(--display); font-size: 24px; line-height: 1; color: var(--plum); padding: 0 0 4px;
+    background: var(--card-cream); cursor: pointer;
   }
   .stepper button.plus { background: var(--mustard); }
   .stepper button:active { transform: scale(.9); }
   .stepper button:disabled { opacity: .35; }
-  .stepper output { min-width: 30px; text-align: center; font-family: var(--display); font-size: 30px; }
+  .stepper output { min-width: 28px; text-align: center; font-family: var(--display); font-size: 27px; }
 
   /* ---------- patchwork budget meter ---------- */
-  .meter { margin-top: 30px; }
-  .meter-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; }
-  .meter-row b { font-family: var(--display); font-weight: 400; font-size: 20px; }
+  .meter { margin-top: 16px; }
+  .meter-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 17px; }
+  .meter-row b { font-family: var(--display); font-weight: 400; font-size: 17px; }
   .patch {
-    position: relative; margin-top: 8px; height: 46px; background: var(--cream) url(assets/checker.png) left center / auto 100% repeat-x;
-    border: 3px solid var(--plum); border-radius: 10px 6px 12px 7px; overflow: hidden; transform: rotate(-.6deg);
+    position: relative; margin-top: 4px; height: 30px; background: var(--card-cream) url(assets/checker.png) left center / auto 100% repeat-x;
+    border: 3px solid var(--plum); border-radius: 10px 6px 12px 7px; overflow: hidden; transform: rotate(-.5deg);
   }
   .patch .cover {
     position: absolute; top: 0; right: 0; bottom: 0; width: 100%;
-    background: repeating-linear-gradient(-45deg, var(--cream) 0 7px, var(--paper) 7px 10px);
+    background: repeating-linear-gradient(-45deg, var(--card-cream) 0 7px, var(--hatch) 7px 10px);
     border-left: 3px solid var(--plum); transition: width .35s cubic-bezier(.3,1.4,.5,1);
   }
   .patch .cover.full { border-left: 0; }
-  .undo { margin-top: 8px; background: none; border: 0; padding: 0; color: var(--plum); font: 700 17px var(--hand); text-decoration: underline wavy var(--coral); cursor: pointer; }
+  .undo { background: none; border: 0; padding: 0; color: var(--plum); font: 700 15px var(--hand); text-decoration: underline wavy var(--coral); cursor: pointer; }
   .undo[hidden] { display: none; }
 
-  .fine { font-size: 18px; margin: 24px 4px 0; text-align: center; }
-  .band { display: block; width: calc(100% + 40px); margin: 26px -20px 0; transform: rotate(-2deg); }
-
-  /* ---------- bottom sheet ---------- */
-  .bar {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-    padding: 22px 20px calc(12px + env(safe-area-inset-bottom));
-    background: var(--cream);
-  }
-  .bar::before {
-    content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 16px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='16'%3E%3Cpath d='M0 16 V8 Q10 0 20 8 T40 8 V16Z' fill='%23FFF6E9'/%3E%3Cpath d='M0 8 Q10 0 20 8 T40 8' fill='none' stroke='%233B1F4A' stroke-width='3'/%3E%3C/svg%3E") repeat-x;
-  }
-  .bar-inner { max-width: 430px; margin: 0 auto; }
-  .summary { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 10px; font-weight: 700; min-height: 26px; }
-  .summary b { font-family: var(--display); font-weight: 400; font-size: 24px; }
+  /* ---------- request button ---------- */
+  .bar { margin-top: auto; padding-top: 14px; }
+  .summary { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 6px; font-weight: 700; min-height: 24px; }
+  .summary b { font-family: var(--display); font-weight: 400; font-size: 22px; }
   .go {
-    display: flex; justify-content: center; align-items: center; height: 64px;
+    display: flex; justify-content: center; align-items: center; height: 58px;
     border-radius: 34px 22px 30px 20px / 24px 32px 22px 30px;
-    background: var(--coral); color: var(--cream); border: 3px solid var(--plum);
+    background: var(--coral); color: #FFF6E9; border: 3px solid var(--plum);
     box-shadow: 5px 5px 0 var(--plum);
-    font-family: var(--display); font-size: 23px; text-decoration: none;
+    font-family: var(--display); font-size: 22px; text-decoration: none;
   }
   .go:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--plum); }
   .go[aria-disabled="true"] {
     background: transparent; color: var(--plum); border-style: dashed; box-shadow: none; pointer-events: none;
-    font-family: var(--hand); font-weight: 700; font-size: 21px;
+    font-family: var(--hand); font-weight: 700; font-size: 20px;
   }
-  .alt { display: block; text-align: center; margin-top: 10px; font-size: 16px; font-weight: 700; color: var(--plum); }
-  .alt[hidden] { display: none; }
+  .alt { display: block; text-align: center; margin-top: 6px; height: 18px; font-size: 15px; font-weight: 700; color: var(--plum); }
+  .alt.off { visibility: hidden; }
+
+  /* ---------- big QR overlay ---------- */
+  .big {
+    position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; align-content: center; gap: 18px;
+    background: rgba(59, 31, 74, .88); color: #FFF6E9; font: 700 22px var(--hand); text-align: center;
+  }
+  .big[hidden] { display: none; }
+  .big .card { width: min(78vw, 330px); aspect-ratio: 1; background: #FFF6E9; padding: 16px; border-radius: 16px; border: 4px solid var(--mustard); }
+  .big svg { width: 100%; height: 100%; display: block; }
+  .big rect { fill: var(--plum); }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
-  <symbol id="bat" viewBox="0 0 64 28"><path d="M32 8c2-4 4-6 5-6 0 2-1 4 0 5 3-1 6 0 6 0 3-4 10-6 21-3-5 2-7 6-7 10-3-2-6-2-8 1-2-2-5-2-7 1-2 2-4 5-6 10-2-5-4-8-6-10-2-3-5-3-7-1-2-3-5-3-8-1 0-4-2-8-7-10 11-3 18-1 21 3 0 0 3-1 6 0 1-1 0-3 0-5 1 0 3 2 5 6z"/></symbol>
 </svg>
 <div class="backdrop"></div>
 <div class="grain"></div>
 
 <main>
-  <header>
-    <svg class="bat" style="top:96px;left:4px;transform:rotate(-12deg)" aria-hidden="true"><use href="#bat"/></svg>
-    <svg class="bat" style="top:150px;right:6px;width:32px;transform:rotate(14deg)" aria-hidden="true"><use href="#bat"/></svg>
+  <div class="stage" id="stage">
     <div class="sticker" id="clock"></div>
-    <img class="hero" src="assets/hero-cat.png" alt="" onerror="this.remove()">
-    <h1><span class="who" id="who"></span><span class="what" id="what"></span></h1>
-    <p class="sub"><b id="budgetText"></b> open bar. <span id="sponsor"></span>'s buying.</p>
-  </header>
+    <img class="hero" id="hero" src="assets/hero-cat-wand.png" alt="">
+    <button class="qr" id="qr" aria-label="Show QR code to share this page"></button>
+  </div>
+
+  <h1><span class="who" id="who"></span><span class="what" id="what"></span></h1>
+  <p class="sub">Drain my Venmo. You got <b id="budgetText"></b>.</p>
 
   <section class="menu" id="menu"></section>
 
   <div class="meter">
-    <div class="meter-row"><span>Your tab tonight</span><b id="spentText"></b></div>
-    <div class="patch">
-      <div class="cover" id="cover"></div>
-    </div>
-    <button class="undo" id="undo" hidden>Didn't actually send that last one? Undo</button>
+    <div class="meter-row"><span>Your tab <button class="undo" id="undo" hidden>undo last</button></span><b id="spentText"></b></div>
+    <div class="patch"><div class="cover" id="cover"></div></div>
   </div>
 
-  <p class="fine">
-    Pick your poison, tap the big button, and Venmo opens with the request all filled in for
-    <b id="handleText"></b>. When it asks “Open in Venmo?”, tap <b>Open</b>.
-    Up to <b id="budgetText2"></b> per phone. Drink water, you gorgeous goblins.
-  </p>
-  <img class="band" src="assets/checker.png" alt="">
-</main>
-
-<div class="bar">
-  <div class="bar-inner">
+  <div class="bar">
     <div class="summary"><span id="lines"></span><b id="total"></b></div>
     <a class="go" id="go" aria-disabled="true">Pick a drink above</a>
-    <a class="alt" id="alt" hidden target="_blank" rel="noopener">Venmo didn't open? Use the website</a>
+    <a class="alt off" id="alt" target="_blank" rel="noopener">Venmo didn't open? Use the website</a>
   </div>
+</main>
+
+<div class="big" id="big" hidden>
+  <div class="card" id="bigCard"></div>
+  <div>Scan to join the open bar ✦</div>
 </div>
 
 <script>
 /* ======== EDIT THESE ======== */
 const CONFIG = {
   venmo: "ParkerJames",         // your Venmo username, without the @
-  sponsor: "Parker",            // shown in the header
   birthdayName: "Crit",
   budget: 81,                   // most one phone can request in total
   birthdayAt: "2026-11-01T00:00:00", // local time the birthday starts
+  // Where the wand's star tip sits in hero-cat-wand.png, as a fraction of the image.
+  wandTip: { x: 0.82, y: 0.22 },
   items: [
-    { id: "shot",  name: "Shot",  sub: "down the hatch",   price: 7, emoji: "🥃", art: "assets/shot.png" },
-    { id: "drink", name: "Drink", sub: "something pretty", price: 9, emoji: "🍸", art: "assets/drink.png" },
+    { id: "shot",  name: "Shot",  price: 7, emoji: "🥃", art: "assets/shot.png" },
+    { id: "drink", name: "Drink", price: 9, emoji: "🍸", art: "assets/drink.png" },
   ],
 };
+// QR for https://mrdocprofpj.github.io/crit-bday/ (29×29, from qrencode -l L).
+const QR = ["11111110001010001001101111111","10000010101000110000101000001","10111010000010000010001011101","10111010111011110101001011101","10111010010000001111101011101","10000010110110011010101000001","11111110101010101010101111111","00000000011100111011100000000","11111011110101100100010101010","00011000001011100001111110001","01000011001000010000010100000","11011000100010111001101101010","10110110011011011101000001100","01001001110001001011001110001","10001010110111111110010011100","00111101111100110011010110010","11110110001100000111000001100","10000000110011001111101110101","10111110111001110100010000100","10101000110011000010011010010","10110110001010111100111110111","00000000110000001111100011111","11111110101110011011101011100","10000010001100100001100010010","10111010111100010100111110111","10111010111011101110100101111","10111010100001111101011111110","10000010111011001000101111010","11111110110010100111001100100"];
 /* ============================ */
 
-const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
 const $ = id => document.getElementById(id);
 const bday = `${CONFIG.birthdayName}'s Birthday`;
 
+// ---- title ----
 $("who").textContent = `${CONFIG.birthdayName}'s`;
-// "Birthday Tab", one crayon colour per letter.
-const palette = ["#E8574A", "#4FA8A0", "#F2B33D", "#6A3F8F", "#E77FA0", "#3B1F4A"];
-$("what").innerHTML = [..."Birthday Tab"].map((c, k) =>
+const palette = ["#DC4E42", "#3F938B", "#E9A92E", "#6A3F8F", "#D9708F", "#3B1F4A"];
+$("what").innerHTML = [..."Whimsical Birthday"].map((c, k) =>
   c === " " ? " " : `<span style="color:${palette[k % palette.length]};transform:rotate(${(k % 3 - 1) * 4}deg)">${c}</span>`).join("");
-$("sponsor").textContent = CONFIG.sponsor;
-$("budgetText").textContent = $("budgetText2").textContent = "$" + CONFIG.budget;
-$("handleText").textContent = "@" + CONFIG.venmo;
+$("budgetText").textContent = "$" + CONFIG.budget;
 
+// ---- QR, conjured module by module ----
+function qrSvg(animated) {
+  const n = QR.length, q = 3;
+  let rects = "";
+  QR.forEach((row, y) => [...row].forEach((bit, x) => {
+    if (bit !== "1") return;
+    // Modules appear in a sweep from the wand side (top-left) with a little randomness.
+    const d = animated ? ((x + y) / (2 * n)) * 1.6 + Math.random() * .35 + .5 : 0;
+    rects += `<rect x="${x + q}" y="${y + q}" width="1.04" height="1.04"${animated ? ` style="animation-delay:${d.toFixed(2)}s"` : ""}/>`;
+  }));
+  return `<svg viewBox="0 0 ${n + 2 * q} ${n + 2 * q}" shape-rendering="crispEdges">${rects}</svg>`;
+}
+$("qr").innerHTML = qrSvg(true);
+$("bigCard").innerHTML = qrSvg(false);
+$("qr").onclick = () => { $("big").hidden = false; };
+$("big").onclick = () => { $("big").hidden = true; };
+
+// ---- sparkles from the wand tip to the QR ----
+const hero = $("hero"), stage = $("stage");
+hero.onerror = () => { hero.onerror = null; hero.src = "assets/hero-cat.png"; CONFIG.wandTip = { x: .2, y: .42 }; };
+const sparkColors = ["#E9A92E", "#FFF6E9", "#E39CB0", "#E9A92E", "#3F938B", "#FFF6E9", "#E9A92E", "#DC4E42"];
+const sparks = sparkColors.map((c, k) => {
+  const s = document.createElement("span");
+  s.className = "spark";
+  s.style.setProperty("--c", c);
+  s.style.setProperty("--d", (k * 0.2).toFixed(2) + "s");
+  s.style.setProperty("--s", (12 + (k % 3) * 5) + "px");
+  stage.appendChild(s);
+  return s;
+});
+function layoutSparks() {
+  const st = stage.getBoundingClientRect(), h = hero.getBoundingClientRect(), q = $("qr").getBoundingClientRect();
+  if (!h.width) return;
+  const x0 = h.left - st.left + h.width * CONFIG.wandTip.x, y0 = h.top - st.top + h.height * CONFIG.wandTip.y;
+  sparks.forEach((s, k) => {
+    // Land along the card's top and left edges, so sparkles never sit on the code while someone scans it.
+    const f = ((k * 37) % 90) / 100, onTop = k % 2 === 0;
+    const tx = q.left - st.left + (onTop ? q.width * (.1 + f) : 0), ty = q.top - st.top + (onTop ? 0 : q.height * (.1 + f));
+    const dx = tx - x0, dy = ty - y0;
+    s.style.setProperty("--x0", x0 + "px"); s.style.setProperty("--y0", y0 + "px");
+    s.style.setProperty("--dx", dx + "px"); s.style.setProperty("--dy", dy + "px");
+    s.style.setProperty("--mx", dx * .5 + "px"); s.style.setProperty("--my", (dy * .5 - 28 - (k % 3) * 10) + "px");
+  });
+}
+hero.addEventListener("load", layoutSparks);
+addEventListener("resize", layoutSparks);
+if (hero.complete) layoutSparks();
+
+// ---- tab state ----
+const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
 const KEY = `tab:${CONFIG.venmo}:${CONFIG.birthdayAt}`;
 // Visit the page with ?reset to zero this phone's tab.
 if (new URLSearchParams(location.search).has("reset")) {
@@ -247,15 +319,12 @@ for (const item of CONFIG.items) {
     <div>
       <div class="name">${item.name}</div>
       <div class="price"><b>$${item.price}</b> each</div>
-      <div class="tag">${item.sub}</div>
-      <div class="dots"></div>
     </div>
     <div class="stepper">
       <button class="minus" aria-label="One less ${item.name}">−</button>
       <output>0</output>
       <button class="plus" aria-label="One more ${item.name}">+</button>
     </div>`;
-  // No artwork? Fall back to the emoji.
   row.querySelector(".art").onerror = e => { e.target.outerHTML = `<div class="art">${item.emoji}</div>`; };
   const out = row.querySelector("output");
   const set = n => {
@@ -292,13 +361,13 @@ function render() {
 
   if (!total) {
     const maxed = left() < Math.min(...CONFIG.items.map(i => i.price));
-    $("lines").textContent = maxed ? "Tab's all used up on this phone 🫡" : "";
+    $("lines").textContent = "";
     $("total").textContent = "";
-    go.textContent = maxed ? "That's the whole tab!" : "Pick a drink above";
+    go.textContent = maxed ? "That's the whole tab! 🫡" : "Pick a drink above";
     go.setAttribute("aria-disabled", "true");
     go.removeAttribute("href");
     // Just sent? Keep the website fallback for that request on screen.
-    alt.hidden = !lastSent;
+    alt.classList.toggle("off", !lastSent);
     if (lastSent) alt.href = lastAlt;
     return;
   }
@@ -315,7 +384,7 @@ function render() {
   go.href = `venmo://paycharge?${q}&recipients=${handle}`;
   // No app: Venmo's web request form.
   alt.href = `https://venmo.com/${handle}?${q}`;
-  alt.hidden = false;
+  alt.classList.remove("off");
 }
 
 function recordSend() {
@@ -339,7 +408,7 @@ $("undo").onclick = () => {
 
 function tick() {
   const ms = new Date(CONFIG.birthdayAt) - new Date();
-  if (ms <= 0) { $("clock").innerHTML = `it's the<b>bday!</b>🎂`; return; }
+  if (ms <= 0) { $("clock").innerHTML = `it's the<b>bday!</b>`; return; }
   const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60;
   $("clock").innerHTML = `bday in<b>${h}h ${String(m).padStart(2, "0")}m</b>`;
 }
