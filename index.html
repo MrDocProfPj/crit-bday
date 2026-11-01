@@ -28,7 +28,7 @@
      So: no fixed layers. The painting is part of the page and runs a "runway" past the top and
      bottom of the screen, and we start scrolled onto it, so the bars show artwork through them. */
   :root { --runway: 96px; }
-  html { background-color: var(--page); }
+  html { background-color: var(--page); overscroll-behavior: none; }
   body {
     margin: 0; color: var(--ink); font-family: var(--hand); font-size: 19px; line-height: 1.2;
     position: relative; padding: var(--runway) 18px; overflow-x: hidden;
@@ -290,6 +290,17 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 const runway = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runway")) || 0;
 const toRunway = () => { if (scrollY < runway() - 2) scrollTo(0, runway()); };
 toRunway(); addEventListener("load", toRunway); addEventListener("pageshow", toRunway);
+// Hold the page still: no sliding into the runways, no rubber-band, no pull-to-refresh.
+// If the page is taller than the screen (small phones), it can still scroll, but only within itself.
+const mainEl = document.querySelector("main");
+const maxScroll = () => runway() + Math.max(0, mainEl.offsetHeight - innerHeight);
+const fits = () => mainEl.offsetHeight <= innerHeight + 1;
+document.addEventListener("touchmove", e => { if (fits()) e.preventDefault(); }, { passive: false });
+addEventListener("scroll", () => {
+  const r = runway(), m = maxScroll();
+  if (scrollY < r - 1) scrollTo(0, r);
+  else if (scrollY > m + 1) scrollTo(0, m);
+}, { passive: true });
 const bday = `${CONFIG.birthdayName}'s Birthday`;
 
 // ---- title ----
