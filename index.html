@@ -153,17 +153,28 @@
   .party { display: none !important; }
   body.bday .countdown { display: none !important; }
   body.bday .party { display: grid !important; }
-  .item.late { display: none; }
-  body.bday .item.late { display: grid; animation: arrive .6s cubic-bezier(.3,1.6,.5,1); }
+  /* Food is on the menu all night, locked until midnight. */
+  .lock {
+    display: none; text-align: center; line-height: 1; padding: 5px 10px 6px; transform: rotate(3deg);
+    background: #FFF6E9; border: 3px dashed var(--plum); border-radius: 14px 10px 16px 12px;
+  }
+  .lock small { display: block; font-size: 14px; font-weight: 700; }
+  .lock b { font-family: var(--display); font-weight: 400; font-size: 19px; font-variant-numeric: tabular-nums; }
+  body:not(.bday) .item.late .stepper { display: none; }
+  body:not(.bday) .item.late .lock { display: block; }
+  body:not(.bday) .item.late::before { filter: url(#rough) saturate(.45) brightness(.92); }
+  body:not(.bday) .item.late .art { filter: grayscale(.7); opacity: .75; }
+  body:not(.bday) .item.late .name::after { content: " 🔒"; font-size: 18px; }
+  body.bday .item.late { animation: arrive .6s cubic-bezier(.3,1.6,.5,1); }
   @keyframes arrive { from { transform: scale(.6) rotate(-8deg); opacity: 0; } }
   .item.food { --card: var(--mustard); transform: rotate(-.6deg); }
   .item.food .stepper button.plus { background: var(--card-cream); }
-  /* Three cards after midnight: tighten so it still fits one screen. */
-  body.bday .menu { gap: 12px; margin-top: 10px; }
-  body.bday .item { padding-top: 5px; padding-bottom: 5px; }
-  body.bday .item .art { width: 46px; height: 46px; }
-  body.bday .stage { flex-basis: 120px; }
-  body.bday .moment { min-height: 56px; }
+  /* Three cards: tighten so it still fits one screen. */
+  .menu { gap: 12px; margin-top: 10px; }
+  .item { padding-top: 5px; padding-bottom: 5px; }
+  .item .art { width: 46px; height: 46px; }
+  .stage { flex-basis: 120px; }
+  .moment { min-height: 56px; }
 
   .confetti { position: fixed; top: -20px; width: 9px; height: 14px; z-index: -1; pointer-events: none; border-radius: 2px;
     animation: fall var(--t) linear var(--d) infinite; opacity: .9; }
@@ -214,11 +225,12 @@
     .kick { font-size: 15px; }
     .clock { font-size: 30px; }
     .hb { font-size: 28px; }
-    body.bday .stage { min-height: 84px; }
-    .moment .kick:last-child { display: none; }
-    body.bday .item .art { width: 40px; height: 40px; }
+    .stage { min-height: 84px; }
+    .item .art { width: 40px; height: 40px; }
     .go { height: 60px; }
   }
+  /* Two lines are enough here; a third crowds the button on most phones. */
+  .moment .kick:last-child { display: none; }
 </style>
 </head>
 <body>
@@ -258,7 +270,7 @@
   </div>
 
   <div class="bar">
-    <a class="go" id="go" aria-disabled="true">Pick a drink above</a>
+    <a class="go" id="go" aria-disabled="true">Wassup Witches, pick your poison!</a>
     <a class="alt off" id="alt" target="_blank" rel="noopener">Venmo didn't open? Use the website</a>
   </div>
 </main>
@@ -384,6 +396,7 @@ for (const item of CONFIG.items) {
       <div class="name">${item.name}</div>
       <div class="price"><b>$${item.price}</b> ${item.each || "each"}</div>
     </div>
+    ${item.late ? `<div class="lock"><small>unlocks in</small><b class="lock-time"></b></div>` : ""}
     <div class="stepper">
       <button class="minus" aria-label="One less ${item.name}">−</button>
       <output>0</output>
@@ -426,7 +439,7 @@ function render() {
   if (!total) {
     const onMenu = CONFIG.items.filter(i => !i.late || isBday());
     const maxed = left() < Math.min(...onMenu.map(i => i.price));
-    go.textContent = maxed ? "That's the whole tab! 🫡" : "Pick a drink above";
+    go.textContent = maxed ? "That's the whole tab! 🫡" : "Wassup Witches, pick your poison!";
     go.setAttribute("aria-disabled", "true");
     go.removeAttribute("href");
     // Just sent? Keep the website fallback for that request on screen.
@@ -498,7 +511,9 @@ function tick() {
   }
   const ms = new Date(CONFIG.birthdayAt) - new Date();
   const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60, sec = Math.floor(ms / 1e3) % 60;
-  $("clock").textContent = `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  const t = `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  $("clock").textContent = t;
+  document.querySelectorAll(".lock-time").forEach(e => e.textContent = t);
 }
 tick(); setInterval(tick, 1000);
 render();
