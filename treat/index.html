@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Buy Rylee a Birthday Drink 🎂</title>
 <meta property="og:title" content="Buy Rylee a Birthday Drink 🎂">
-<meta property="og:description" content="It's Rylee's whimsical birthday. Send her a shot, a drink, or post-bar food on Venmo.">
+<meta property="og:description" content="It's Rylee's whimsical birthday. Send her a shot, a drink, or any amount on Venmo.">
 <meta property="og:image" content="https://mrdocprofpj.github.io/crit-bday/assets/crit-touch-icon.png">
 <link rel="icon" type="image/png" sizes="96x96" href="../assets/crit-icon-96.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/crit-icon-32.png">
@@ -51,7 +51,7 @@
   h1 .what span { display: inline-block; text-shadow: 2px 2px 0 var(--plum); }
   .sub { margin: 10px 0 0; font-size: 20px; font-weight: 700; }
 
-  .picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-top: 18px; }
+  .picks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; margin-top: 18px; }
   .pick {
     position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 4px 10px;
     border: 3px solid var(--plum); border-radius: 22px 14px 24px 12px / 14px 22px 12px 20px;
@@ -63,7 +63,22 @@
   .pick small { font-size: 16px; font-weight: 700; }
   .pick:nth-child(1) { --c: var(--teal); transform: rotate(-2deg); }
   .pick:nth-child(2) { --c: var(--pink); transform: rotate(1deg); }
-  .pick:nth-child(3) { --c: var(--mustard); transform: rotate(-1deg); }
+  /* Any amount: a mustard strip with − $15 + */
+  .own {
+    display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 8px; width: 100%; margin-top: 16px;
+    padding: 8px 12px 8px 16px; background: var(--mustard); color: var(--plum); cursor: pointer;
+    border: 3px solid var(--plum); border-radius: 22px 14px 24px 12px / 14px 22px 12px 20px;
+    box-shadow: 4px 4px 0 var(--plum); transform: rotate(.6deg); text-align: left;
+  }
+  .own span { font-family: var(--display); font-size: 20px; line-height: 1; }
+  .own output { min-width: 62px; text-align: center; font-family: var(--display); font-size: 24px; }
+  .own button {
+    width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--plum); padding: 0 0 4px;
+    font-family: var(--display); font-size: 22px; line-height: 1; color: var(--plum); background: var(--card-cream); cursor: pointer;
+  }
+  .own button:active { transform: scale(.9); }
+  .own button:disabled { opacity: .35; }
+  .own[aria-pressed="true"] { transform: translate(2px, 2px) rotate(0); box-shadow: 1px 1px 0 var(--plum); outline: 3px solid var(--coral); outline-offset: 3px; }
   .pick[aria-pressed="true"] { transform: translate(2px, 2px) rotate(0); box-shadow: 1px 1px 0 var(--plum); outline: 3px solid var(--coral); outline-offset: 3px; }
 
   .go {
@@ -83,9 +98,8 @@
     .picks { margin-top: 12px; }
     .pick img { width: 40px; height: 40px; }
     .go { height: 60px; }
-    .any { margin-top: 6px; }
+    .own { margin-top: 12px; }
   }
-  .any { display: block; margin-top: 10px; font-size: 17px; font-weight: 700; color: var(--plum); }
 </style>
 </head>
 <body>
@@ -100,9 +114,14 @@
   <p class="sub">It's my birthday, witches 🎂</p>
 
   <div class="picks" id="picks"></div>
+  <div class="own" id="own" role="button" aria-pressed="false">
+    <span>Any amount</span>
+    <button id="less" aria-label="Five dollars less">−</button>
+    <output id="amt"></output>
+    <button id="more" aria-label="Five dollars more">+</button>
+  </div>
   <div class="spacer"></div>
   <a class="go" id="go"></a>
-  <a class="any" id="any">or send any amount</a>
 </main>
 
 <script>
@@ -113,8 +132,8 @@ const CONFIG = {
   treats: [
     { id: "shot",  label: "a shot",  price: 7,  emoji: "🥃", art: "../assets/shot.png" },
     { id: "drink", label: "a drink", price: 9,  emoji: "🍸", art: "../assets/drink.png" },
-    { id: "food",  label: "fries",   price: 10, emoji: "🍟", art: "../assets/food.png" },
   ],
+  custom: { start: 15, step: 5, min: 5, max: 200 },
 };
 /* ============================ */
 
@@ -129,7 +148,9 @@ const handle = encodeURIComponent(CONFIG.venmo);
 const payLink = (amount, note) =>
   `venmo://paycharge?txn=pay&recipients=${handle}${amount ? `&amount=${amount.toFixed(2)}` : ""}&note=${encodeURIComponent(note)}`;
 
-let chosen = CONFIG.treats[1];
+const C = CONFIG.custom;
+let custom = C.start;
+let chosen = CONFIG.treats[1];   // a treat object, or "own"
 const picks = $("picks");
 for (const t of CONFIG.treats) {
   const b = document.createElement("button");
@@ -139,12 +160,24 @@ for (const t of CONFIG.treats) {
   t.btn = b;
   picks.appendChild(b);
 }
+const setCustom = n => { custom = Math.max(C.min, Math.min(C.max, n)); chosen = "own"; render(); };
+$("less").onclick = e => { e.stopPropagation(); setCustom(custom - C.step); };
+$("more").onclick = e => { e.stopPropagation(); setCustom(custom + C.step); };
+$("own").onclick = () => { chosen = "own"; render(); };
 function render() {
   for (const t of CONFIG.treats) t.btn.setAttribute("aria-pressed", t === chosen);
-  $("go").innerHTML = `<span>Send ${CONFIG.name} $${chosen.price}</span><small>${chosen.emoji} for ${chosen.label}</small>`;
-  $("go").href = payLink(chosen.price, `${chosen.emoji} ${chosen.label} for ${CONFIG.name}'s birthday 🎂`);
+  $("own").setAttribute("aria-pressed", chosen === "own");
+  $("amt").textContent = "$" + custom;
+  $("less").disabled = custom <= C.min;
+  $("more").disabled = custom >= C.max;
+  if (chosen === "own") {
+    $("go").innerHTML = `<span>Send ${CONFIG.name} $${custom}</span><small>🎂 birthday money</small>`;
+    $("go").href = payLink(custom, `🎂 for ${CONFIG.name}'s birthday`);
+  } else {
+    $("go").innerHTML = `<span>Send ${CONFIG.name} $${chosen.price}</span><small>${chosen.emoji} for ${chosen.label}</small>`;
+    $("go").href = payLink(chosen.price, `${chosen.emoji} ${chosen.label} for ${CONFIG.name}'s birthday 🎂`);
+  }
 }
-$("any").href = payLink(0, `🎂 for ${CONFIG.name}'s birthday`);
 render();
 
 // Hold the page still on the painted runway (same as the main page).
