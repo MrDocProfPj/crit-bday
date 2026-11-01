@@ -21,7 +21,8 @@
     --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
     --runway: 96px;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* manipulation = no double-tap-to-zoom anywhere (fast + taps won't zoom the page). */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   /* Same paper + runway trick as the main page, so Safari's bars show artwork, not flat tan. */
   html { background-color: var(--page); overscroll-behavior: none; }
   body {

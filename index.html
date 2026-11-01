@@ -26,7 +26,8 @@
     --hand: "Gaegu", "Chalkboard SE", "Marker Felt", system-ui, sans-serif;
     --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* manipulation = no double-tap-to-zoom anywhere (fast + taps won't zoom the page). */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   /* iOS 26 Safari tints its bars from full-width fixed elements, or a flat colour at scroll 0.
      So: no fixed layers. The painting is part of the page and runs a "runway" past the top and
      bottom of the screen, and we start scrolled onto it, so the bars show artwork through them. */
