@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CDBB98">
 <title>Crit's Whimsical Birthday</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +10,7 @@
 <style>
   :root {
     /* Dimmed kraft-paper ground so it doesn't flashbang in a dark bar. */
-    --page: #CDBB98;
+    --page: #D1BB95;
     --card-cream: #EBDDC2;
     --hatch: #DCCBAA;
     --mustard: #E9A92E;
@@ -25,7 +24,7 @@
     --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { background: var(--page); }
+  html { background: var(--page) url(assets/bg-dim.jpg) center / cover no-repeat; min-height: 100%; }
   body {
     margin: 0; color: var(--ink); font-family: var(--hand); font-size: 19px; line-height: 1.2;
     min-height: 100svh; display: flex; flex-direction: column;
@@ -36,7 +35,9 @@
 
   /* Painted backdrop (dimmed) + crayon grain. Fixed layers, since iOS ignores background-attachment: fixed. */
   .backdrop, .grain { position: fixed; inset: 0; pointer-events: none; }
-  .backdrop { z-index: -2; background: url(assets/bg.jpg) center top / cover no-repeat; filter: brightness(.8) sepia(.25) saturate(1.1); }
+  /* Taller than the screen so the painting runs under the status bar and Safari's toolbar. */
+  .backdrop { z-index: -2; top: -120px; bottom: -120px; background: var(--page) url(assets/bg-dim.jpg) center / cover no-repeat; }
+  .grain { top: -120px; bottom: -120px; }
   .grain {
     z-index: 50; opacity: .25; mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .12 0 0 0 0 .29 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -46,23 +47,6 @@
 
   /* ---------- the spell: cat → sparkles → QR ---------- */
   .stage { position: relative; flex: 1 1 150px; min-height: 104px; max-height: 210px; }
-  /* Short screens (small iPhones, Safari toolbars showing): tighten everything so it fits one view. */
-  @media (max-height: 640px) {
-    .stage { min-height: 92px; }
-    h1 { margin-top: 2px; }
-    h1 .who { font-size: 38px; }
-    .item .art { width: 44px; height: 44px; }
-    .item .name { font-size: 22px; }
-    .stepper button { width: 40px; height: 40px; }
-    .alt { margin-top: 4px; }
-    .sub { margin-top: 4px; font-size: 19px; }
-    .menu { gap: 12px; margin-top: 10px; }
-    .item { padding-top: 6px; padding-bottom: 6px; }
-    .meter { margin-top: 10px; }
-    .bar { padding-top: 8px; }
-    .go { height: 52px; }
-    .summary { min-height: 20px; margin-bottom: 4px; }
-  }
   .hero { position: absolute; left: 0; bottom: -4px; height: 108%; aspect-ratio: 1; object-fit: contain; transform: rotate(-3deg); transform-origin: bottom center; }
   .qr {
     position: absolute; right: 2px; top: 50%; height: min(78%, 140px); aspect-ratio: 1;
@@ -91,13 +75,6 @@
     85%  { opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) scale(.3) rotate(320deg); opacity: 0; }
   }
-  .sticker {
-    position: absolute; bottom: 0; left: 46%; width: 62px; height: 62px; border-radius: 50%;
-    background: var(--teal); color: #FFF6E9; display: grid; place-content: center; text-align: center;
-    transform: rotate(-10deg); font-weight: 700; font-size: 13px; line-height: 1;
-    box-shadow: inset 0 0 0 3px #FFF6E9, inset 0 0 0 5px var(--plum); z-index: 2;
-  }
-  .sticker b { font-family: var(--display); font-weight: 400; font-size: 16px; display: block; margin-top: 2px; }
 
   /* ---------- title ---------- */
   h1 { margin: 6px 0 0; font-family: var(--display); font-weight: 400; line-height: .95; text-align: center; }
@@ -155,8 +132,37 @@
   .undo { background: none; border: 0; padding: 0; color: var(--plum); font: 700 15px var(--hand); text-decoration: underline wavy var(--coral); cursor: pointer; }
   .undo[hidden] { display: none; }
 
+  /* ---------- countdown / celebration ---------- */
+  .moment { flex: 1 1 0; min-height: 64px; display: grid; place-items: center; text-align: center; padding: 8px 0 0; }
+  .moment > div { display: grid; justify-items: center; gap: 2px; }
+  .kick { font-weight: 700; font-size: 18px; }
+  .clock {
+    font-family: var(--display); font-size: clamp(34px, 11vw, 46px); line-height: 1.05; color: var(--coral);
+    text-shadow: 3px 3px 0 var(--plum); font-variant-numeric: tabular-nums; letter-spacing: .02em;
+  }
+  .hb { font-family: var(--display); font-size: clamp(30px, 9.5vw, 40px); line-height: 1.05; color: var(--mustard); text-shadow: 3px 3px 0 var(--plum); animation: wiggle 1.2s ease-in-out infinite; }
+  @keyframes wiggle { 50% { transform: rotate(-3deg) scale(1.05); } }
+  .party { display: none !important; }
+  body.bday .countdown { display: none !important; }
+  body.bday .party { display: grid !important; }
+  .item.late { display: none; }
+  body.bday .item.late { display: grid; animation: arrive .6s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes arrive { from { transform: scale(.6) rotate(-8deg); opacity: 0; } }
+  .item.food { --card: var(--mustard); transform: rotate(-.6deg); }
+  .item.food .stepper button.plus { background: var(--card-cream); }
+  /* Three cards after midnight: tighten so it still fits one screen. */
+  body.bday .menu { gap: 12px; margin-top: 10px; }
+  body.bday .item { padding-top: 5px; padding-bottom: 5px; }
+  body.bday .item .art { width: 46px; height: 46px; }
+  body.bday .stage { flex-basis: 120px; }
+  body.bday .moment { min-height: 56px; }
+
+  .confetti { position: fixed; top: -20px; width: 9px; height: 14px; z-index: -1; pointer-events: none; border-radius: 2px;
+    animation: fall var(--t) linear var(--d) infinite; opacity: .9; }
+  @keyframes fall { to { transform: translate(var(--drift), 110vh) rotate(var(--spin)); } }
+
   /* ---------- request button ---------- */
-  .bar { margin-top: auto; padding-top: 14px; }
+  .bar { padding-top: 10px; }
   .summary { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 6px; font-weight: 700; min-height: 24px; }
   .summary b { font-family: var(--display); font-weight: 400; font-size: 22px; }
   .go {
@@ -183,6 +189,29 @@
   .big .card { width: min(78vw, 330px); aspect-ratio: 1; background: #FFF6E9; padding: 16px; border-radius: 16px; border: 4px solid var(--mustard); }
   .big svg { width: 100%; height: 100%; display: block; }
   .big rect { fill: var(--plum); }
+  /* Short screens (small iPhones, Safari toolbars showing): tighten everything so it fits one view. */
+  @media (max-height: 700px) {
+    .stage { min-height: 92px; }
+    h1 { margin-top: 2px; }
+    h1 .who { font-size: 38px; }
+    .item .art { width: 44px; height: 44px; }
+    .item .name { font-size: 22px; }
+    .stepper button { width: 40px; height: 40px; }
+    .alt { margin-top: 4px; }
+    .sub { margin-top: 4px; font-size: 19px; }
+    .menu { gap: 12px; margin-top: 10px; }
+    .item { padding-top: 6px; padding-bottom: 6px; }
+    .meter { margin-top: 10px; }
+    .bar { padding-top: 6px; }
+    .moment { min-height: 50px; padding-top: 4px; }
+    .kick { font-size: 15px; }
+    .clock { font-size: 30px; }
+    .hb { font-size: 28px; }
+    body.bday .stage { min-height: 84px; }
+    body.bday .item .art { width: 40px; height: 40px; }
+    .go { height: 52px; }
+    .summary { min-height: 20px; margin-bottom: 4px; }
+  }
 </style>
 </head>
 <body>
@@ -194,7 +223,6 @@
 
 <main>
   <div class="stage" id="stage">
-    <div class="sticker" id="clock"></div>
     <img class="hero" id="hero" src="assets/hero-cat-wand.png" alt="">
     <button class="qr" id="qr" aria-label="Show QR code to share this page"></button>
   </div>
@@ -207,6 +235,19 @@
   <div class="meter">
     <div class="meter-row"><span>Your tab <button class="undo" id="undo" hidden>undo last</button></span><b id="spentText"></b></div>
     <div class="patch"><div class="cover" id="cover"></div></div>
+  </div>
+
+  <div class="moment" id="moment">
+    <div class="countdown" id="countdown">
+      <span class="kick">the witching hour</span>
+      <span class="clock" id="clock"></span>
+      <span class="kick">till Crit's birthday</span>
+    </div>
+    <div class="party" id="party">
+      <span class="kick">✦ it's officially ✦</span>
+      <span class="hb">Crit's Birthday!</span>
+      <span class="kick">post-bar food unlocked 🍟</span>
+    </div>
   </div>
 
   <div class="bar">
@@ -233,6 +274,8 @@ const CONFIG = {
   items: [
     { id: "shot",  name: "Shot",  price: 7, emoji: "🥃", art: "assets/shot.png" },
     { id: "drink", name: "Drink", price: 9, emoji: "🍸", art: "assets/drink.png" },
+    // Shows up once it's her birthday.
+    { id: "food",  name: "Food",  price: 10, emoji: "🍟", art: "assets/food.png", late: true, each: "post-bar" },
   ],
 };
 // QR for https://mrdocprofpj.github.io/crit-bday/ (29×29, from qrencode -l L).
@@ -313,12 +356,12 @@ const cartTotal = () => CONFIG.items.reduce((s, i) => s + i.price * counts[i.id]
 const menu = $("menu");
 for (const item of CONFIG.items) {
   const row = document.createElement("div");
-  row.className = `item ${item.id}`;
+  row.className = `item ${item.id}${item.late ? " late" : ""}`;
   row.innerHTML = `
     <img class="art" src="${item.art}" alt="">
     <div>
       <div class="name">${item.name}</div>
-      <div class="price"><b>$${item.price}</b> each</div>
+      <div class="price"><b>$${item.price}</b> ${item.each || "each"}</div>
     </div>
     <div class="stepper">
       <button class="minus" aria-label="One less ${item.name}">−</button>
@@ -360,7 +403,8 @@ function render() {
   $("undo").hidden = !lastSent;
 
   if (!total) {
-    const maxed = left() < Math.min(...CONFIG.items.map(i => i.price));
+    const onMenu = CONFIG.items.filter(i => !i.late || isBday());
+    const maxed = left() < Math.min(...onMenu.map(i => i.price));
     $("lines").textContent = "";
     $("total").textContent = "";
     go.textContent = maxed ? "That's the whole tab! 🫡" : "Pick a drink above";
@@ -406,13 +450,40 @@ $("undo").onclick = () => {
   render();
 };
 
-function tick() {
-  const ms = new Date(CONFIG.birthdayAt) - new Date();
-  if (ms <= 0) { $("clock").innerHTML = `it's the<b>bday!</b>`; return; }
-  const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60;
-  $("clock").innerHTML = `bday in<b>${h}h ${String(m).padStart(2, "0")}m</b>`;
+// ?midnight previews the after-midnight version.
+const forceBday = new URLSearchParams(location.search).has("midnight");
+const isBday = () => forceBday || Date.now() >= new Date(CONFIG.birthdayAt).getTime();
+function confetti() {
+  if (document.querySelector(".confetti")) return;
+  const cols = ["#E9A92E", "#DC4E42", "#3F938B", "#E39CB0", "#6A3F8F", "#FFF6E9"];
+  for (let k = 0; k < 28; k++) {
+    const c = document.createElement("i");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = cols[k % cols.length];
+    c.style.setProperty("--t", (4 + Math.random() * 4).toFixed(1) + "s");
+    c.style.setProperty("--d", (-Math.random() * 8).toFixed(1) + "s");
+    c.style.setProperty("--drift", (Math.random() * 80 - 40).toFixed(0) + "px");
+    c.style.setProperty("--spin", (360 + Math.random() * 720).toFixed(0) + "deg");
+    if (k % 3 === 0) c.style.borderRadius = "50%";
+    document.body.appendChild(c);
+  }
 }
-tick(); setInterval(tick, 15000);
+function tick() {
+  if (isBday()) {
+    if (!document.body.classList.contains("bday")) {
+      document.body.classList.add("bday");
+      confetti();
+      render();
+      layoutSparks();
+    }
+    return;
+  }
+  const ms = new Date(CONFIG.birthdayAt) - new Date();
+  const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60, sec = Math.floor(ms / 1e3) % 60;
+  $("clock").textContent = `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+}
+tick(); setInterval(tick, 1000);
 render();
 </script>
 </body>
