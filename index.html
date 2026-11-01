@@ -31,7 +31,7 @@
   html { background-color: var(--page); overscroll-behavior: none; }
   body {
     margin: 0; color: var(--ink); font-family: var(--hand); font-size: 19px; line-height: 1.2;
-    position: relative; padding: var(--runway) 18px; overflow-x: hidden;
+    position: relative; padding: var(--runway) 18px calc(var(--runway) * 3); overflow-x: hidden;
   }
   .paper {
     position: absolute; inset: 0; z-index: -2; pointer-events: none;
@@ -175,7 +175,7 @@
     box-shadow: 5px 5px 0 var(--plum);
     font-family: var(--display); font-size: 22px; text-decoration: none;
   }
-  .go small { font: 700 17px var(--hand); margin-top: 2px; }
+  .go small { font: 700 20px var(--hand); margin-top: 1px; }
   .go:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--plum); }
   .go[aria-disabled="true"] {
     background: transparent; color: var(--plum); border-style: dashed; box-shadow: none; pointer-events: none;
@@ -436,7 +436,7 @@ function render() {
   const q = `txn=charge&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
   const handle = encodeURIComponent(CONFIG.venmo);
 
-  go.innerHTML = `<span>Request $${total} on Venmo</span><small>${parts.join(" + ")}</small>`;
+  go.innerHTML = `<span>Request $${total} for</span><small>${parts.join(" + ")}</small>`;
   go.setAttribute("aria-disabled", "false");
   // Straight into the app. Going via venmo.com turns spaces in the note into literal "+".
   go.href = `venmo://paycharge?${q}&recipients=${handle}`;
