@@ -2,130 +2,200 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cut">
-<meta name="theme-color" content="#0b0710">
-<title>The Birthday Tab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF6E9">
+<title>Crit's Birthday Tab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Shrikhand&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0710;
-    --card: #17101f;
-    --line: #2c2138;
-    --ink: #f6eefc;
-    --dim: #a593b8;
-    --hot: #ff3d8b;
-    --gold: #ffc53d;
-    --venmo: #008cff;
+    --cream: #FFF6E9;
+    --paper: #FBEBD3;
+    --mustard: #F2B33D;
+    --teal: #4FA8A0;
+    --plum: #3B1F4A;
+    --pink: #F6B5C6;
+    --coral: #E8574A;
+    --purple: #6A3F8F;
+    --ink: var(--plum);
+    --hand: "Gaegu", "Chalkboard SE", "Marker Felt", system-ui, sans-serif;
+    --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  html { background: var(--cream); }
   body {
-    font-family: "Bricolage Grotesque", system-ui, sans-serif;
-    min-height: 100dvh;
-    padding: max(20px, env(safe-area-inset-top)) 18px calc(150px + env(safe-area-inset-bottom));
-    background:
-      radial-gradient(60% 40% at 85% 0%, #ff3d8b33, transparent 70%),
-      radial-gradient(50% 35% at 0% 20%, #7a3dff2e, transparent 70%),
-      var(--bg);
+    margin: 0; color: var(--ink); font-family: var(--hand); font-size: 20px; line-height: 1.25;
+    min-height: 100svh;
+    padding: max(14px, env(safe-area-inset-top)) 20px calc(200px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
   }
-  main { max-width: 440px; margin: 0 auto; }
+  button, a { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 
-  header { margin: 8px 0 22px; }
-  .kicker { font-size: 18px; font-weight: 500; color: var(--gold); margin: 0 0 14px; }
-  h1 {
-    font-weight: 800; font-size: clamp(44px, 14vw, 64px); line-height: .9;
-    letter-spacing: -.03em; margin: 10px 0 12px;
+  /* Painted backdrop + crayon grain. Fixed layers, since iOS ignores background-attachment: fixed. */
+  .backdrop, .grain { position: fixed; inset: 0; pointer-events: none; }
+  .backdrop { z-index: -2; background: var(--cream) url(assets/bg.jpg) center top / cover no-repeat; }
+  .grain {
+    z-index: 50; opacity: .22; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .12 0 0 0 0 .29 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  h1 em { font-style: normal; color: var(--hot); }
-  .countdown {
-    display: inline-flex; gap: 8px; align-items: center;
-    font: 500 13px/1 "JetBrains Mono", monospace; color: var(--dim);
-    border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px;
-  }
-  .countdown b { color: var(--ink); font-weight: 700; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hot); }
 
-  .menu { display: grid; gap: 10px; }
+  main { position: relative; max-width: 430px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  header { position: relative; text-align: center; padding-top: 6px; }
+  .hero {
+    display: block; width: 62%; max-width: 250px; margin: 0 auto -6px;
+    transform: rotate(-4deg); animation: bob 4s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { transform: rotate(-1deg) translateY(-6px); } }
+  h1 { margin: 0; font-family: var(--display); font-weight: 400; line-height: .95; }
+  h1 .who {
+    display: block; font-size: 64px; color: var(--coral);
+    text-shadow: 3px 3px 0 var(--plum);
+    transform: rotate(-3deg);
+  }
+  h1 .what { display: block; font-size: 34px; margin-top: 6px; letter-spacing: .01em; }
+  h1 .what span { display: inline-block; }
+  .sub { margin: 10px 0 0; font-size: 22px; font-weight: 700; }
+  .sub b { background: var(--mustard); padding: 0 6px; border-radius: 6px 10px 5px 9px; }
+
+  .sticker {
+    position: absolute; top: 4px; right: -6px; width: 92px; height: 92px; border-radius: 50%;
+    background: var(--teal); color: var(--cream); display: grid; place-content: center; text-align: center;
+    transform: rotate(10deg); font-weight: 700; font-size: 16px; line-height: 1.05;
+    box-shadow: inset 0 0 0 4px var(--cream), inset 0 0 0 7px var(--plum);
+  }
+  .sticker b { font-family: var(--display); font-weight: 400; font-size: 22px; display: block; }
+  .bat { position: absolute; width: 44px; height: 20px; fill: var(--plum); }
+
+  /* ---------- menu cards ---------- */
+  .menu { display: grid; gap: 22px; margin-top: 26px; }
   .item {
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
-    background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 14px 14px 16px;
-    transition: border-color .15s, transform .15s;
+    position: relative; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 10px;
+    padding: 16px 14px 16px 10px; isolation: isolate;
   }
-  .item.on { border-color: var(--hot); }
-  .item .name { font-weight: 800; font-size: 20px; }
-  .item .sub { color: var(--dim); font-size: 14px; margin-top: 2px; }
-  .item .price { font: 700 14px "JetBrains Mono", monospace; color: var(--gold); }
-  .stepper { display: flex; align-items: center; gap: 4px; }
+  .item::before, .item::after { content: ""; position: absolute; inset: 0; z-index: -1; }
+  .item::before {
+    background: var(--card); border-radius: 26px 14px 30px 12px / 14px 28px 12px 24px;
+    filter: url(#rough);
+  }
+  .item::after {
+    border: 3px solid var(--plum); border-radius: 22px 30px 14px 28px / 26px 12px 26px 14px;
+    transform: translate(7px, 7px); z-index: -2;
+  }
+  .item.shot  { --card: var(--teal); transform: rotate(-1.2deg); }
+  .item.drink { --card: var(--pink); transform: rotate(1deg); }
+  .item.on::after { border-color: var(--coral); border-width: 4px; }
+  .item .art { width: 64px; height: 64px; object-fit: contain; display: grid; place-items: center; font-size: 46px; }
+  .item .name { font-family: var(--display); font-size: 30px; line-height: 1; }
+  .item .price { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .item .price b { font-size: 24px; }
+  .item .tag { font-size: 17px; white-space: nowrap; }
+  .dots { height: 8px; margin-top: 8px; width: 70px;
+    background: radial-gradient(circle, var(--plum) 3px, transparent 3.5px) 0 50% / 14px 8px repeat-x; opacity: .7; }
+
+  .stepper { display: flex; align-items: center; gap: 6px; }
   .stepper button {
-    width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line);
-    background: #221830; color: var(--ink); font: 800 22px/1 "Bricolage Grotesque", sans-serif; cursor: pointer;
+    width: 46px; height: 46px; border-radius: 50%; border: 3px solid var(--plum);
+    font-family: var(--display); font-size: 26px; line-height: 1; color: var(--plum); padding: 0 0 4px;
+    background: var(--cream); cursor: pointer;
   }
-  .stepper button:active { transform: scale(.94); }
-  .stepper button.plus { background: var(--hot); border-color: var(--hot); color: #1a0010; }
-  .stepper output { min-width: 30px; text-align: center; font: 700 20px "JetBrains Mono", monospace; }
+  .stepper button.plus { background: var(--mustard); }
+  .stepper button:active { transform: scale(.9); }
+  .stepper button:disabled { opacity: .35; }
+  .stepper output { min-width: 30px; text-align: center; font-family: var(--display); font-size: 30px; }
 
-  .meter { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 18px; }
-  .meter-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--dim); }
-  .meter-row b { color: var(--ink); font: 700 14px "JetBrains Mono", monospace; }
-  .track { height: 8px; border-radius: 99px; background: #221830; margin-top: 10px; overflow: hidden; }
-  .fill { height: 100%; width: 0; background: var(--gold); transition: width .3s; }
-  .undo { margin-top: 10px; background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+  /* ---------- patchwork budget meter ---------- */
+  .meter { margin-top: 30px; }
+  .meter-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; }
+  .meter-row b { font-family: var(--display); font-weight: 400; font-size: 20px; }
+  .patch {
+    position: relative; margin-top: 8px; height: 46px; background: var(--cream) url(assets/checker.png) left center / auto 100% repeat-x;
+    border: 3px solid var(--plum); border-radius: 10px 6px 12px 7px; overflow: hidden; transform: rotate(-.6deg);
+  }
+  .patch .cover {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 100%;
+    background: repeating-linear-gradient(-45deg, var(--cream) 0 7px, var(--paper) 7px 10px);
+    border-left: 3px solid var(--plum); transition: width .35s cubic-bezier(.3,1.4,.5,1);
+  }
+  .patch .cover.full { border-left: 0; }
+  .undo { margin-top: 8px; background: none; border: 0; padding: 0; color: var(--plum); font: 700 17px var(--hand); text-decoration: underline wavy var(--coral); cursor: pointer; }
   .undo[hidden] { display: none; }
-  .stepper button:disabled { opacity: .3; }
-  .fine { color: var(--dim); font-size: 13px; line-height: 1.5; margin: 22px 4px 0; }
-  .fine a { color: var(--dim); }
 
+  .fine { font-size: 18px; margin: 24px 4px 0; text-align: center; }
+  .band { display: block; width: calc(100% + 40px); margin: 26px -20px 0; transform: rotate(-2deg); }
+
+  /* ---------- bottom sheet ---------- */
   .bar {
-    position: fixed; left: 0; right: 0; bottom: 0;
-    padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    padding: 22px 20px calc(12px + env(safe-area-inset-bottom));
+    background: var(--cream);
   }
-  .bar-inner { max-width: 440px; margin: 0 auto; }
-  .summary {
-    display: flex; justify-content: space-between; align-items: baseline;
-    font: 500 13px "JetBrains Mono", monospace; color: var(--dim); margin: 0 4px 10px; min-height: 16px;
+  .bar::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 16px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='16'%3E%3Cpath d='M0 16 V8 Q10 0 20 8 T40 8 V16Z' fill='%23FFF6E9'/%3E%3Cpath d='M0 8 Q10 0 20 8 T40 8' fill='none' stroke='%233B1F4A' stroke-width='3'/%3E%3C/svg%3E") repeat-x;
   }
-  .summary b { color: var(--ink); font-size: 15px; }
+  .bar-inner { max-width: 430px; margin: 0 auto; }
+  .summary { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 10px; font-weight: 700; min-height: 26px; }
+  .summary b { font-family: var(--display); font-weight: 400; font-size: 24px; }
   .go {
-    display: flex; justify-content: center; align-items: center; gap: 10px;
-    height: 62px; border-radius: 20px; background: var(--venmo); color: white;
-    font-weight: 800; font-size: 20px; text-decoration: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,.45);
+    display: flex; justify-content: center; align-items: center; height: 64px;
+    border-radius: 34px 22px 30px 20px / 24px 32px 22px 30px;
+    background: var(--coral); color: var(--cream); border: 3px solid var(--plum);
+    box-shadow: 5px 5px 0 var(--plum);
+    font-family: var(--display); font-size: 23px; text-decoration: none;
   }
-  .go[aria-disabled="true"] { background: #241a2f; color: var(--dim); box-shadow: none; pointer-events: none; }
-  .alt { display: block; text-align: center; margin-top: 10px; font-size: 13px; color: var(--dim); }
+  .go:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--plum); }
+  .go[aria-disabled="true"] {
+    background: transparent; color: var(--plum); border-style: dashed; box-shadow: none; pointer-events: none;
+    font-family: var(--hand); font-weight: 700; font-size: 21px;
+  }
+  .alt { display: block; text-align: center; margin-top: 10px; font-size: 16px; font-weight: 700; color: var(--plum); }
   .alt[hidden] { display: none; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
+  <symbol id="bat" viewBox="0 0 64 28"><path d="M32 8c2-4 4-6 5-6 0 2-1 4 0 5 3-1 6 0 6 0 3-4 10-6 21-3-5 2-7 6-7 10-3-2-6-2-8 1-2-2-5-2-7 1-2 2-4 5-6 10-2-5-4-8-6-10-2-3-5-3-7-1-2-3-5-3-8-1 0-4-2-8-7-10 11-3 18-1 21 3 0 0 3-1 6 0 1-1 0-3 0-5 1 0 3 2 5 6z"/></symbol>
+</svg>
+<div class="backdrop"></div>
+<div class="grain"></div>
+
 <main>
   <header>
-    <h1><em id="bdayName"></em> Tab</h1>
-    <p class="kicker"><span id="budgetText"></span> open bar. <span id="sponsor"></span> is buying.</p>
-    <div class="countdown"><span class="dot"></span><span id="clock"></span></div>
+    <svg class="bat" style="top:96px;left:4px;transform:rotate(-12deg)" aria-hidden="true"><use href="#bat"/></svg>
+    <svg class="bat" style="top:150px;right:6px;width:32px;transform:rotate(14deg)" aria-hidden="true"><use href="#bat"/></svg>
+    <div class="sticker" id="clock"></div>
+    <img class="hero" src="assets/hero-cat.png" alt="" onerror="this.remove()">
+    <h1><span class="who" id="who"></span><span class="what" id="what"></span></h1>
+    <p class="sub"><b id="budgetText"></b> open bar. <span id="sponsor"></span>'s buying.</p>
   </header>
 
   <section class="menu" id="menu"></section>
 
-  <div class="meter" id="meter">
-    <div class="meter-row"><span>Requested from this phone</span><b id="spentText"></b></div>
-    <div class="track"><div class="fill" id="fill"></div></div>
-    <button class="undo" id="undo" hidden>Didn’t actually send that last one? Undo</button>
+  <div class="meter">
+    <div class="meter-row"><span>Your tab tonight</span><b id="spentText"></b></div>
+    <div class="patch">
+      <div class="cover" id="cover"></div>
+    </div>
+    <button class="undo" id="undo" hidden>Didn't actually send that last one? Undo</button>
   </div>
 
   <p class="fine">
-    Pick what you need and tap the blue button. Venmo opens with the request already filled in and sent to
-    <span id="handleText"></span>. It gets paid the second <span class="sponsorName"></span> taps “Pay.” Max <span id="budgetText2"></span> per phone. Drink water, look after each other.
+    Pick your poison, tap the big button, and Venmo opens with the request all filled in for
+    <b id="handleText"></b>. When it asks “Open in Venmo?”, tap <b>Open</b>.
+    Up to <b id="budgetText2"></b> per phone. Drink water, you gorgeous goblins.
   </p>
+  <img class="band" src="assets/checker.png" alt="">
 </main>
 
 <div class="bar">
   <div class="bar-inner">
-    <div class="summary"><span id="lines">Nothing on the tab yet</span><b id="total"></b></div>
-    <a class="go" id="go" aria-disabled="true">Request on Venmo</a>
-    <a class="alt" id="alt" hidden target="_blank" rel="noopener">Venmo didn’t open? Use the website</a>
+    <div class="summary"><span id="lines"></span><b id="total"></b></div>
+    <a class="go" id="go" aria-disabled="true">Pick a drink above</a>
+    <a class="alt" id="alt" hidden target="_blank" rel="noopener">Venmo didn't open? Use the website</a>
   </div>
 </div>
 
@@ -134,25 +204,29 @@
 const CONFIG = {
   venmo: "ParkerJames",         // your Venmo username, without the @
   sponsor: "Parker",            // shown in the header
-  birthdayName: "Crit",         // e.g. "Sam" → "Sam's Birthday Tab" (blank → "The Birthday Tab")
+  birthdayName: "Crit",
   budget: 81,                   // most one phone can request in total
   birthdayAt: "2026-11-01T00:00:00", // local time the birthday starts
   items: [
-    { id: "shot",  name: "Shot",  sub: "Down the hatch",          price: 7, emoji: "🥃" },
-    { id: "drink", name: "Drink", sub: "Cocktail, beer, seltzer", price: 9, emoji: "🍸" },
+    { id: "shot",  name: "Shot",  sub: "down the hatch",   price: 7, emoji: "🥃", art: "assets/shot.png" },
+    { id: "drink", name: "Drink", sub: "something pretty", price: 9, emoji: "🍸", art: "assets/drink.png" },
   ],
 };
 /* ============================ */
 
 const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
 const $ = id => document.getElementById(id);
+const bday = `${CONFIG.birthdayName}'s Birthday`;
 
+$("who").textContent = `${CONFIG.birthdayName}'s`;
+// "Birthday Tab", one crayon colour per letter.
+const palette = ["#E8574A", "#4FA8A0", "#F2B33D", "#6A3F8F", "#E77FA0", "#3B1F4A"];
+$("what").innerHTML = [..."Birthday Tab"].map((c, k) =>
+  c === " " ? " " : `<span style="color:${palette[k % palette.length]};transform:rotate(${(k % 3 - 1) * 4}deg)">${c}</span>`).join("");
 $("sponsor").textContent = CONFIG.sponsor;
-document.querySelectorAll(".sponsorName").forEach(e => e.textContent = CONFIG.sponsor);
-const bday = CONFIG.birthdayName ? `${CONFIG.birthdayName}'s Birthday` : "Birthday";
-$("bdayName").textContent = CONFIG.birthdayName ? bday : "The Birthday";
-document.title = `${$("bdayName").textContent} Tab`;
 $("budgetText").textContent = $("budgetText2").textContent = "$" + CONFIG.budget;
+$("handleText").textContent = "@" + CONFIG.venmo;
+
 const KEY = `tab:${CONFIG.venmo}:${CONFIG.birthdayAt}`;
 // Visit the page with ?reset to zero this phone's tab.
 if (new URLSearchParams(location.search).has("reset")) {
@@ -163,22 +237,26 @@ let spent = Number(localStorage.getItem(KEY)) || 0;
 let lastSent = 0, lastAlt = "";
 const left = () => CONFIG.budget - spent;
 const cartTotal = () => CONFIG.items.reduce((s, i) => s + i.price * counts[i.id], 0);
-$("handleText").textContent = "@" + CONFIG.venmo;
 
 const menu = $("menu");
 for (const item of CONFIG.items) {
   const row = document.createElement("div");
-  row.className = "item";
+  row.className = `item ${item.id}`;
   row.innerHTML = `
+    <img class="art" src="${item.art}" alt="">
     <div>
-      <div class="name">${item.emoji} ${item.name}</div>
-      <div class="sub">${item.sub} · <span class="price">$${item.price}</span></div>
+      <div class="name">${item.name}</div>
+      <div class="price"><b>$${item.price}</b> each</div>
+      <div class="tag">${item.sub}</div>
+      <div class="dots"></div>
     </div>
     <div class="stepper">
       <button class="minus" aria-label="One less ${item.name}">−</button>
       <output>0</output>
       <button class="plus" aria-label="One more ${item.name}">+</button>
     </div>`;
+  // No artwork? Fall back to the emoji.
+  row.querySelector(".art").onerror = e => { e.target.outerHTML = `<div class="art">${item.emoji}</div>`; };
   const out = row.querySelector("output");
   const set = n => {
     counts[item.id] = Math.max(0, Math.min(20, n));
@@ -189,10 +267,10 @@ for (const item of CONFIG.items) {
   item.plusBtn = row.querySelector(".plus");
   item.minusBtn = row.querySelector(".minus");
   item.set = set;
-  row.querySelector(".minus").onclick = () => set(counts[item.id] - 1);
-  row.querySelector(".plus").onclick = () => {
+  item.minusBtn.onclick = () => set(counts[item.id] - 1);
+  item.plusBtn.onclick = () => {
     if (cartTotal() + item.price > left()) return;
-    set(counts[item.id] + 1); navigator.vibrate?.(10);
+    set(counts[item.id] + 1);
   };
   menu.appendChild(row);
 }
@@ -200,31 +278,33 @@ for (const item of CONFIG.items) {
 function render() {
   const picked = CONFIG.items.filter(i => counts[i.id] > 0);
   const total = picked.reduce((s, i) => s + i.price * counts[i.id], 0);
-  const parts = picked.map(i => `${counts[i.id]} ${i.name.toLowerCase()}${counts[i.id] > 1 && !i.name.endsWith("s") ? "s" : ""}`);
+  const parts = picked.map(i => `${counts[i.id]} ${i.name.toLowerCase()}${counts[i.id] > 1 ? "s" : ""}`);
   const go = $("go"), alt = $("alt");
   for (const i of CONFIG.items) {
     i.plusBtn.disabled = total + i.price > left();
     i.minusBtn.disabled = counts[i.id] === 0;
   }
-  $("spentText").textContent = `$${spent} of $${CONFIG.budget}`;
-  $("fill").style.width = Math.min(100, (spent + total) / CONFIG.budget * 100) + "%";
+  const used = Math.min(CONFIG.budget, spent + total);
+  $("spentText").textContent = `$${used} of $${CONFIG.budget}`;
+  $("cover").style.width = (100 - used / CONFIG.budget * 100) + "%";
+  $("cover").classList.toggle("full", used >= CONFIG.budget);
   $("undo").hidden = !lastSent;
 
   if (!total) {
-    $("lines").textContent = left() < Math.min(...CONFIG.items.map(i => i.price)) ? "Tab’s maxed out on this phone 🫡" : "Nothing on the tab yet";
+    const maxed = left() < Math.min(...CONFIG.items.map(i => i.price));
+    $("lines").textContent = maxed ? "Tab's all used up on this phone 🫡" : "";
     $("total").textContent = "";
-    go.textContent = "Request on Venmo";
+    go.textContent = maxed ? "That's the whole tab!" : "Pick a drink above";
     go.setAttribute("aria-disabled", "true");
     go.removeAttribute("href");
-    // Just sent? Keep the app-link fallback for that request on screen.
+    // Just sent? Keep the website fallback for that request on screen.
     alt.hidden = !lastSent;
     if (lastSent) alt.href = lastAlt;
     return;
   }
 
   const note = `${picked.map((i, k) => `${i.emoji} ${parts[k]}`).join(" + ")} for ${bday} 🎂`;
-  const amount = total.toFixed(2);
-  const q = `txn=charge&amount=${amount}&note=${encodeURIComponent(note)}`;
+  const q = `txn=charge&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
   const handle = encodeURIComponent(CONFIG.venmo);
 
   $("lines").textContent = parts.join(" + ");
@@ -233,7 +313,7 @@ function render() {
   go.setAttribute("aria-disabled", "false");
   // Straight into the app. Going via venmo.com turns spaces in the note into literal "+".
   go.href = `venmo://paycharge?${q}&recipients=${handle}`;
-  // No app (or desktop): Venmo's web request form.
+  // No app: Venmo's web request form.
   alt.href = `https://venmo.com/${handle}?${q}`;
   alt.hidden = false;
 }
@@ -259,11 +339,11 @@ $("undo").onclick = () => {
 
 function tick() {
   const ms = new Date(CONFIG.birthdayAt) - new Date();
-  if (ms <= 0) { $("clock").innerHTML = `<b>It’s officially ${CONFIG.birthdayName ? CONFIG.birthdayName + "’s" : "the"} birthday 🎂</b>`; return; }
-  const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60, s = Math.floor(ms / 1e3) % 60;
-  $("clock").innerHTML = `Birthday in <b>${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s</b>`;
+  if (ms <= 0) { $("clock").innerHTML = `it's the<b>bday!</b>🎂`; return; }
+  const h = Math.floor(ms / 3.6e6), m = Math.floor(ms / 6e4) % 60;
+  $("clock").innerHTML = `bday in<b>${h}h ${String(m).padStart(2, "0")}m</b>`;
 }
-tick(); setInterval(tick, 1000);
+tick(); setInterval(tick, 15000);
 render();
 </script>
 </body>
