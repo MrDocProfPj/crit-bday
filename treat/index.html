@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy Rylee a Birthday Drink 🎂</title>
+<meta property="og:title" content="Buy Rylee a Birthday Drink 🎂">
+<meta property="og:description" content="It's Rylee's whimsical birthday. Send her a shot, a drink, or post-bar food on Venmo.">
+<meta property="og:image" content="https://mrdocprofpj.github.io/crit-bday/assets/crit-touch-icon.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../assets/crit-icon-96.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/crit-icon-32.png">
+<link rel="apple-touch-icon" href="../assets/crit-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Shrikhand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page: #D1BB95; --card-cream: #EBDDC2; --mustard: #E9A92E; --teal: #3F938B; --plum: #3B1F4A;
+    --pink: #E39CB0; --coral: #DC4E42;
+    --hand: "Gaegu", "Chalkboard SE", "Marker Felt", system-ui, sans-serif;
+    --display: "Shrikhand", "Chalkboard SE", Georgia, serif;
+    --runway: 96px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* Same paper + runway trick as the main page, so Safari's bars show artwork, not flat tan. */
+  html { background-color: var(--page); overscroll-behavior: none; }
+  body {
+    margin: 0; color: var(--plum); font-family: var(--hand); font-size: 19px; line-height: 1.2;
+    position: relative; padding: var(--runway) 20px calc(var(--runway) * 3); overflow-x: hidden;
+  }
+  .paper {
+    position: absolute; inset: 0; z-index: -2; pointer-events: none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .12 0 0 0 0 .29 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") repeat,
+      url(../assets/bg-dim.jpg) center / cover no-repeat,
+      var(--page);
+  }
+  button, a { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  main {
+    min-height: 100svh; max-width: 430px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;
+    padding: 6px 0 max(14px, env(safe-area-inset-bottom)); text-align: center;
+  }
+
+  .hero { width: min(66vw, 34svh, 270px); aspect-ratio: 1; object-fit: contain; animation: bob 4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-6px) rotate(1deg); } }
+
+  h1 { margin: 2px 0 0; font-family: var(--display); font-weight: 400; line-height: .98; }
+  h1 .top { display: block; font-size: clamp(24px, 7.4vw, 30px); }
+  h1 .who { display: block; font-size: clamp(48px, 15vw, 62px); color: var(--coral); text-shadow: 3px 3px 0 var(--plum); transform: rotate(-2deg); }
+  h1 .what { display: block; font-size: clamp(22px, 7vw, 29px); margin-top: 4px; white-space: nowrap; letter-spacing: .03em; }
+  h1 .what span { display: inline-block; text-shadow: 2px 2px 0 var(--plum); }
+  .sub { margin: 10px 0 0; font-size: 20px; font-weight: 700; }
+
+  .picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-top: 18px; }
+  .pick {
+    position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 4px 10px;
+    border: 3px solid var(--plum); border-radius: 22px 14px 24px 12px / 14px 22px 12px 20px;
+    background: var(--c); color: var(--plum); font: inherit; cursor: pointer;
+    box-shadow: 4px 4px 0 var(--plum); transition: transform .12s;
+  }
+  .pick img { width: 48px; height: 48px; object-fit: contain; }
+  .pick b { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1; }
+  .pick small { font-size: 16px; font-weight: 700; }
+  .pick:nth-child(1) { --c: var(--teal); transform: rotate(-2deg); }
+  .pick:nth-child(2) { --c: var(--pink); transform: rotate(1deg); }
+  .pick:nth-child(3) { --c: var(--mustard); transform: rotate(-1deg); }
+  .pick[aria-pressed="true"] { transform: translate(2px, 2px) rotate(0); box-shadow: 1px 1px 0 var(--plum); outline: 3px solid var(--coral); outline-offset: 3px; }
+
+  .go {
+    display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;
+    margin-top: auto; height: 66px; line-height: 1.05;
+    border-radius: 34px 22px 30px 20px / 24px 32px 22px 30px;
+    background: var(--coral); color: #FFF6E9; border: 3px solid var(--plum); box-shadow: 5px 5px 0 var(--plum);
+    font-family: var(--display); font-size: 23px; text-decoration: none;
+  }
+  .go small { font: 700 18px var(--hand); margin-top: 2px; }
+  .go:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--plum); }
+  .spacer { flex: 1 0 18px; }
+  @media (max-height: 640px) {
+    .hero { width: min(50vw, 28svh); }
+    h1 .who { font-size: 44px; }
+    .sub { margin-top: 6px; }
+    .picks { margin-top: 12px; }
+    .pick img { width: 40px; height: 40px; }
+    .go { height: 60px; }
+    .any { margin-top: 6px; }
+  }
+  .any { display: block; margin-top: 10px; font-size: 17px; font-weight: 700; color: var(--plum); }
+</style>
+</head>
+<body>
+<div class="paper"></div>
+<main>
+  <img class="hero" src="../assets/hero-crit-tonight.png" alt="Cartoon of Rylee in a party hat with a witch cat on her shoulder">
+  <h1>
+    <span class="top">Buy</span>
+    <span class="who" id="who"></span>
+    <span class="what" id="what"></span>
+  </h1>
+  <p class="sub">It's my birthday, witches 🎂</p>
+
+  <div class="picks" id="picks"></div>
+  <div class="spacer"></div>
+  <a class="go" id="go"></a>
+  <a class="any" id="any">or send any amount</a>
+</main>
+
+<script>
+/* ======== EDIT THESE ======== */
+const CONFIG = {
+  venmo: "Rylee-Lehmkuhl",   // Rylee's Venmo username, without the @
+  name: "Rylee",
+  treats: [
+    { id: "shot",  label: "a shot",  price: 7,  emoji: "🥃", art: "../assets/shot.png" },
+    { id: "drink", label: "a drink", price: 9,  emoji: "🍸", art: "../assets/drink.png" },
+    { id: "food",  label: "fries",   price: 10, emoji: "🍟", art: "../assets/food.png" },
+  ],
+};
+/* ============================ */
+
+const $ = id => document.getElementById(id);
+$("who").textContent = `${CONFIG.name}`;
+const palette = ["#DC4E42", "#3F938B", "#F2B33D", "#8A55B5", "#E77FA0", "#4FB0A6"];
+$("what").innerHTML = [..."a Birthday Drink"].map((c, k) =>
+  c === " " ? " " : `<span style="color:${palette[k % palette.length]};transform:rotate(${(k % 3 - 1) * 4}deg)">${c}</span>`).join("");
+
+// Venmo app link: txn=pay sends money TO Rylee, with amount and note filled in.
+const handle = encodeURIComponent(CONFIG.venmo);
+const payLink = (amount, note) =>
+  `venmo://paycharge?txn=pay&recipients=${handle}${amount ? `&amount=${amount.toFixed(2)}` : ""}&note=${encodeURIComponent(note)}`;
+
+let chosen = CONFIG.treats[1];
+const picks = $("picks");
+for (const t of CONFIG.treats) {
+  const b = document.createElement("button");
+  b.className = "pick";
+  b.innerHTML = `<img src="${t.art}" alt=""><b>$${t.price}</b><small>${t.label}</small>`;
+  b.onclick = () => { chosen = t; render(); };
+  t.btn = b;
+  picks.appendChild(b);
+}
+function render() {
+  for (const t of CONFIG.treats) t.btn.setAttribute("aria-pressed", t === chosen);
+  $("go").innerHTML = `<span>Send ${CONFIG.name} $${chosen.price}</span><small>${chosen.emoji} for ${chosen.label}</small>`;
+  $("go").href = payLink(chosen.price, `${chosen.emoji} ${chosen.label} for ${CONFIG.name}'s birthday 🎂`);
+}
+$("any").href = payLink(0, `🎂 for ${CONFIG.name}'s birthday`);
+render();
+
+// Hold the page still on the painted runway (same as the main page).
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const runway = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runway")) || 0;
+const toRunway = () => { if (scrollY < runway() - 2) scrollTo(0, runway()); };
+toRunway(); addEventListener("load", toRunway); addEventListener("pageshow", toRunway);
+const mainEl = document.querySelector("main");
+const fits = () => mainEl.offsetHeight <= innerHeight + 1;
+document.addEventListener("touchmove", e => { if (fits()) e.preventDefault(); }, { passive: false });
+addEventListener("scroll", () => {
+  const r = runway(), m = r + Math.max(0, mainEl.offsetHeight - innerHeight);
+  if (scrollY < r - 1) scrollTo(0, r); else if (scrollY > m + 1) scrollTo(0, m);
+}, { passive: true });
+</script>
+</body>
+</html>
