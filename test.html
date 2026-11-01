@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Venmo link test</title>
+<style>
+  body { font: 17px/1.45 system-ui, sans-serif; background: #0b0710; color: #f6eefc; padding: 24px 18px; max-width: 440px; margin: auto; }
+  a { display: block; padding: 18px; margin: 14px 0 4px; border-radius: 16px; background: #008cff; color: #fff; font-weight: 700; text-decoration: none; text-align: center; }
+  p.s { margin: 0 0 10px; color: #a593b8; font-size: 14px; }
+</style></head><body>
+<h1>Venmo link test</h1>
+<p>Each button makes a $1 request to @ParkerJames. For each one, note: did a prompt appear, and are the amount and note filled in? Cancel the request in Venmo after each.</p>
+<div id="list"></div>
+<script>
+const note = encodeURIComponent("🥃 1 shot + 🍸 1 drink for Crit's Birthday 🎂");
+const q = `txn=charge&amount=1.00&note=${note}`;
+const tests = [
+  ["A · App link (what the site uses now)", `venmo://paycharge?${q}&recipients=ParkerJames`],
+  ["B · venmo.com/u/ link (could skip the prompt)", `https://venmo.com/u/ParkerJames?${q}`],
+];
+document.getElementById("list").innerHTML = tests.map(([t, h]) => `<a href="${h}">${t}</a><p class="s">${h.split("?")[0]}</p>`).join("");
+</script>
+</body></html>

@@ -124,8 +124,8 @@
 <div class="bar">
   <div class="bar-inner">
     <div class="summary"><span id="lines">Nothing on the tab yet</span><b id="total"></b></div>
-    <a class="go" id="go" aria-disabled="true" target="_blank" rel="noopener">Request on Venmo</a>
-    <a class="alt" id="alt" hidden>Venmo didn’t open? Tap here</a>
+    <a class="go" id="go" aria-disabled="true">Request on Venmo</a>
+    <a class="alt" id="alt" hidden target="_blank" rel="noopener">Venmo didn’t open? Use the website</a>
   </div>
 </div>
 
@@ -217,8 +217,7 @@ function render() {
     return;
   }
 
-  const emojis = picked.map(i => i.emoji.repeat(Math.min(counts[i.id], 3))).join("");
-  const note = `${emojis} ${parts.join(" + ")} · ${bday} 🎂`;
+  const note = `${picked.map((i, k) => `${i.emoji} ${parts[k]}`).join(" + ")} for ${bday} 🎂`;
   const amount = total.toFixed(2);
   const q = `txn=charge&amount=${amount}&note=${encodeURIComponent(note)}`;
   const handle = encodeURIComponent(CONFIG.venmo);
@@ -227,10 +226,10 @@ function render() {
   $("total").textContent = "$" + total;
   go.textContent = `Request $${total} on Venmo`;
   go.setAttribute("aria-disabled", "false");
-  // Real <a> tap on venmo.com/<user> so iOS hands off to the app (universal link).
-  go.href = `https://venmo.com/${handle}?${q}`;
-  // Fallback straight into the app's URL scheme.
-  alt.href = `venmo://paycharge?${q}&recipients=${handle}`;
+  // Straight into the app. Going via venmo.com turns spaces in the note into literal "+".
+  go.href = `venmo://paycharge?${q}&recipients=${handle}`;
+  // No app (or desktop): Venmo's web request form.
+  alt.href = `https://venmo.com/${handle}?${q}`;
   alt.hidden = false;
 }
 
