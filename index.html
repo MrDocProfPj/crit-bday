@@ -268,7 +268,7 @@
   <section class="menu" id="menu"></section>
 
   <div class="meter">
-    <span class="tab-label">Tab<button class="undo" id="undo" hidden>undo</button></span>
+    <span class="tab-label">Group tab<button class="undo" id="undo" hidden>undo</button></span>
     <div class="patch"><div class="cover" id="cover"></div></div>
     <b class="spent" id="spentText"></b>
   </div>
@@ -303,7 +303,10 @@
 const CONFIG = {
   venmo: "ParkerJames",         // your Venmo username, without the @
   birthdayName: "Crit",
-  budget: 81,                   // most one phone can request in total
+  budget: 81,                   // most the whole group can request in total
+  // Shared tab: every phone posts its requests to this ntfy.sh topic and adds them up.
+  // ntfy.sh keeps messages for 12 hours, plenty for one night. Keep the name unguessable.
+  tabTopic: "crit-bday-tab-7866e17ac1a0d6e8",
   birthdayAt: "2026-11-01T00:00:00", // local time the birthday starts
   // Where the wand's star tip sits in hero-crit-tonight.png, as a fraction of the image.
   wandTip: { x: 0.913, y: 0.296 },
@@ -341,7 +344,6 @@ $("who").textContent = `${CONFIG.birthdayName}'s`;
 const palette = ["#DC4E42", "#3F938B", "#F2B33D", "#8A55B5", "#E77FA0", "#4FB0A6"];
 $("what").innerHTML = [..."Whimsical Birthday"].map((c, k) =>
   c === " " ? " " : `<span style="color:${palette[k % palette.length]};transform:rotate(${(k % 3 - 1) * 4}deg)">${c}</span>`).join("");
-$("budgetText").textContent = "$" + CONFIG.budget;
 
 // ---- QR, conjured module by module ----
 function qrSvg(animated) {
@@ -400,13 +402,46 @@ if (hero.complete) layoutSparks();
 
 // ---- tab state ----
 const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
-const KEY = `tab:${CONFIG.venmo}:${CONFIG.birthdayAt}`;
-// Visit the page with ?reset to zero this phone's tab.
+// ---- shared group tab (ntfy.sh topic used as an append-only log) ----
+// Each request posts {"amount": n}; undo posts a negative amount; ?reset posts {"reset": true}.
+// The tab is the sum of everything after the latest reset. Every phone streams the log live.
+const KEY = `sharedtab:${CONFIG.tabTopic}`;   // last known group total, for instant paint (old per-phone totals ignored)
+const TAB_URL = `https://ntfy.sh/${CONFIG.tabTopic}`;
+const log = new Map();                                      // message id -> {time, amount|reset}
+let spent = Number(localStorage.getItem(KEY)) || 0;
+function recompute() {
+  const msgs = [...log.values()].sort((a, b) => a.time - b.time || a.seq - b.seq);
+  let total = 0;
+  for (const m of msgs) total = m.reset ? 0 : total + m.amount;
+  spent = Math.max(0, total);
+  localStorage.setItem(KEY, spent);
+  render();
+}
+let seq = 0;
+function ingest(ev) {
+  if (ev.event !== "message" || log.has(ev.id)) return;
+  let body; try { body = JSON.parse(ev.message); } catch { return; }
+  if (body.reset) log.set(ev.id, { time: ev.time, seq: seq++, reset: true });
+  else if (Number.isFinite(body.amount)) log.set(ev.id, { time: ev.time, seq: seq++, amount: body.amount });
+  else return;
+  recompute();
+}
+const postTab = body => fetch(TAB_URL, { method: "POST", body: JSON.stringify(body), keepalive: true })
+  .then(r => r.json()).then(ingest).catch(() => {});
+let stream = null;
+function connect() {
+  if (stream) stream.close();
+  stream = new EventSource(`${TAB_URL}/sse?since=all`);
+  stream.onmessage = e => { try { ingest(JSON.parse(e.data)); } catch {} };
+}
+// Phones drop background connections; reconnect whenever the page comes back.
+addEventListener("pageshow", connect);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) connect(); });
+// Visit the page with ?reset to zero the whole group's tab.
 if (new URLSearchParams(location.search).has("reset")) {
-  localStorage.removeItem(KEY);
+  postTab({ reset: true });
   history.replaceState(null, "", location.pathname);
 }
-let spent = Number(localStorage.getItem(KEY)) || 0;
 let lastSent = 0, lastAlt = "";
 const left = () => CONFIG.budget - spent;
 const cartTotal = () => CONFIG.items.reduce((s, i) => s + i.price * counts[i.id], 0);
@@ -458,6 +493,7 @@ function render() {
   }
   const used = Math.min(CONFIG.budget, spent + total);
   $("spentText").textContent = `$${used} of $${CONFIG.budget}`;
+  $("budgetText").textContent = "$" + Math.max(0, CONFIG.budget - spent);
   $("cover").style.width = (100 - used / CONFIG.budget * 100) + "%";
   $("cover").classList.toggle("full", used >= CONFIG.budget);
   $("undo").hidden = !lastSent;
@@ -492,8 +528,8 @@ function recordSend() {
   if (!total) return;
   lastSent = total;
   lastAlt = $("alt").href;
-  spent += total;
-  localStorage.setItem(KEY, spent);
+  spent += total;                       // show it right away; the shared log confirms it
+  postTab({ amount: total });
   // Let the link navigate first, then clear the cart.
   setTimeout(() => CONFIG.items.forEach(i => i.set(0)), 300);
 }
@@ -501,8 +537,8 @@ $("go").addEventListener("click", recordSend);
 $("alt").addEventListener("click", recordSend);
 $("undo").onclick = () => {
   spent = Math.max(0, spent - lastSent);
+  postTab({ amount: -lastSent });
   lastSent = 0; lastAlt = "";
-  localStorage.setItem(KEY, spent);
   render();
 };
 
@@ -543,6 +579,7 @@ function tick() {
 tick(); setInterval(tick, 1000);
 matchCardHeight();
 render();
+connect();
 </script>
 </body>
 </html>
