@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+  // Old GitHub Pages / is.gd links forward to the real site.
+  if (location.hostname.endsWith("github.io")) location.replace("https://critsbday.vercel.app" + location.pathname.replace(/^\/crit-bday/, "") + location.search);
+</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Crit's Whimsical Birthday</title>
 <link rel="icon" type="image/png" sizes="96x96" href="assets/crit-icon-96-2.png">
@@ -293,7 +298,7 @@
 </main>
 
 <div class="big" id="big" hidden>
-  <div class="card"><a id="shareLink" href="https://is.gd/critsbday"><img src="assets/share-qr.png" alt="QR code for is.gd/critsbday"></a></div>
+  <div class="card"><a id="shareLink" href="https://critsbday.vercel.app"><img src="assets/share-qr.png" alt="QR code for critsbday.vercel.app"></a></div>
   <div>group drinky time even! ✦</div>
   <div class="hint">long-press the code to share it</div>
 </div>
@@ -304,9 +309,6 @@ const CONFIG = {
   venmo: "ParkerJames",         // your Venmo username, without the @
   birthdayName: "Crit",
   budget: 81,                   // most the whole group can request in total
-  // Shared tab: every phone posts its requests to this ntfy.sh topic and adds them up.
-  // ntfy.sh keeps messages for 12 hours, plenty for one night. Keep the name unguessable.
-  tabTopic: "crit-bday-tab-7866e17ac1a0d6e8",
   birthdayAt: "2026-11-01T00:00:00", // local time the birthday starts
   // Where the wand's star tip sits in hero-crit-tonight.png, as a fraction of the image.
   wandTip: { x: 0.913, y: 0.296 },
@@ -317,8 +319,8 @@ const CONFIG = {
     { id: "food",  name: "Food",  price: 10, emoji: "🍟", art: "assets/food.png", late: true, each: "post-bar" },
   ],
 };
-// QR for https://is.gd/critsbday (forwards to the site), from qrencode -l L.
-const QR = ["1111111001001001001111111", "1000001010011011001000001", "1011101011111000101011101", "1011101001110010001011101", "1011101010000101101011101", "1000001011010011001000001", "1111111010101010101111111", "0000000011001010100000000", "1101001100100110001110110", "0000110100110100101000001", "1000111011100010101010011", "1101110010000110011100000", "1010101010001100101001011", "0001100110111000011101101", "1001011000001010000110101", "0110000011101100111010010", "1100111111110001111111100", "0000000011100111100011001", "1111111011000011101011011", "1000001000110011100011101", "1011101001111110111111001", "1011101010011011000111100", "1011101001111111000110101", "1000001011111101110001000", "1111111011011011110100011"];
+// QR for https://critsbday.vercel.app, from qrencode -l L.
+const QR = ["1111111000100111101111111", "1000001011100111001000001", "1011101010000000101011101", "1011101001000010101011101", "1011101011101101101011101", "1000001010100001101000001", "1111111010101010101111111", "0000000010110001100000000", "1101001100010110101110110", "1111110011001100101000001", "0001001010001100001000011", "1010110111100101101110000", "1101001010100100111001011", "0111010101001010011101101", "1011011100110100110110101", "0111100000110100000010010", "1100001011001000111111100", "0000000010111111100011001", "1111111010101111101011011", "1000001001101010100011110", "1011101000101110111111000", "1011101010100100100111100", "1011101001001100010110101", "1000001011001100110001000", "1111111010011101101100011"];
 /* ============================ */
 
 const $ = id => document.getElementById(id);
@@ -402,41 +404,23 @@ if (hero.complete) layoutSparks();
 
 // ---- tab state ----
 const counts = Object.fromEntries(CONFIG.items.map(i => [i.id, 0]));
-// ---- shared group tab (ntfy.sh topic used as an append-only log) ----
-// Each request posts {"amount": n}; undo posts a negative amount; ?reset posts {"reset": true}.
-// The tab is the sum of everything after the latest reset. Every phone streams the log live.
-const KEY = `sharedtab:${CONFIG.tabTopic}`;   // last known group total, for instant paint (old per-phone totals ignored)
-const TAB_URL = `https://ntfy.sh/${CONFIG.tabTopic}`;
-const log = new Map();                                      // message id -> {time, amount|reset}
+// ---- shared group tab, stored by /api/tab (Vercel function + Neon Postgres) ----
+const KEY = "sharedtab:v2";   // last known group total, for instant paint
 let spent = Number(localStorage.getItem(KEY)) || 0;
-function recompute() {
-  const msgs = [...log.values()].sort((a, b) => a.time - b.time || a.seq - b.seq);
-  let total = 0;
-  for (const m of msgs) total = m.reset ? 0 : total + m.amount;
-  spent = Math.max(0, total);
+const applyTab = d => {
+  if (!d || !Number.isFinite(d.spent)) return;
+  spent = d.spent;
   localStorage.setItem(KEY, spent);
   render();
-}
-let seq = 0;
-function ingest(ev) {
-  if (ev.event !== "message" || log.has(ev.id)) return;
-  let body; try { body = JSON.parse(ev.message); } catch { return; }
-  if (body.reset) log.set(ev.id, { time: ev.time, seq: seq++, reset: true });
-  else if (Number.isFinite(body.amount)) log.set(ev.id, { time: ev.time, seq: seq++, amount: body.amount });
-  else return;
-  recompute();
-}
-const postTab = body => fetch(TAB_URL, { method: "POST", body: JSON.stringify(body), keepalive: true })
-  .then(r => r.json()).then(ingest).catch(() => {});
-let stream = null;
-function connect() {
-  if (stream) stream.close();
-  stream = new EventSource(`${TAB_URL}/sse?since=all`);
-  stream.onmessage = e => { try { ingest(JSON.parse(e.data)); } catch {} };
-}
-// Phones drop background connections; reconnect whenever the page comes back.
-addEventListener("pageshow", connect);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) connect(); });
+};
+const syncTab = () => fetch("/api/tab", { cache: "no-store" }).then(r => r.json()).then(applyTab).catch(() => {});
+const postTab = body => fetch("/api/tab", {
+  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: true,
+}).then(r => r.json()).then(applyTab).catch(() => {});
+// Poll while the page is on screen, and right away whenever it comes back.
+setInterval(() => { if (!document.hidden) syncTab(); }, 4000);
+addEventListener("pageshow", syncTab);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) syncTab(); });
 // Visit the page with ?reset to zero the whole group's tab.
 if (new URLSearchParams(location.search).has("reset")) {
   postTab({ reset: true });
@@ -579,7 +563,7 @@ function tick() {
 tick(); setInterval(tick, 1000);
 matchCardHeight();
 render();
-connect();
+syncTab();
 </script>
 </body>
 </html>
